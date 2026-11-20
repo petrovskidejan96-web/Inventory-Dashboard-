@@ -1,3 +1,4 @@
+/** Number columns on the country tabs (USA, UK, DE+FR+IT+ES, Canada). */
 export const NUMERIC_FIELDS = [
   "amazon",
   "externalWarehouse",
@@ -5,9 +6,18 @@ export const NUMERIC_FIELDS = [
   "otw1",
   "otw2",
   "last30",
+  "sending",
+  "futureOrder",
 ] as const;
 
 export type NumericField = (typeof NUMERIC_FIELDS)[number];
+
+/** Columns on the Supplier Inventory tab that are typed in. */
+export const SUPPLIER_NUMBER_FIELDS = ["ready", "underProduction"] as const;
+export const SUPPLIER_TEXT_FIELDS = ["supplierName", "supplierLink"] as const;
+export type SupplierNumberField = (typeof SUPPLIER_NUMBER_FIELDS)[number];
+export type SupplierTextField = (typeof SUPPLIER_TEXT_FIELDS)[number];
+export type SupplierField = SupplierNumberField | SupplierTextField;
 
 /** Where each column is filled from automatically. Anything can still be overwritten by hand. */
 export function autoSource(country: string, field: NumericField): string | null {
@@ -19,6 +29,7 @@ export function autoSource(country: string, field: NumericField): string | null 
 }
 
 export type CellSource = "sheet" | "amazon" | "proboxx" | "manual" | "api";
+export type CellMeta = { source: CellSource; at: string };
 
 export interface Child {
   id: string;
@@ -31,8 +42,12 @@ export interface Child {
   otw1: number | null;
   otw2: number | null;
   last30: number | null;
+  /** Sending Inventory — typed in. Subtracted from the supplier's stock on the Supplier tab. */
+  sending: number | null;
+  /** Future order — typed in. Summed over all marketplaces on the Supplier tab. */
+  futureOrder: number | null;
   /** Where each value last came from and when. */
-  meta?: Partial<Record<NumericField, { source: CellSource; at: string }>>;
+  meta?: Partial<Record<NumericField, CellMeta>>;
 }
 
 export interface Group {
@@ -72,19 +87,34 @@ export interface Country {
   sync?: SyncState;
 }
 
+export interface SupplierItem {
+  id: string;
+  name: string;
+  asin: string | null;
+  ready: number | null;
+  underProduction: number | null;
+  supplierName: string | null;
+  supplierLink: string | null;
+  meta?: Partial<Record<SupplierField, CellMeta>>;
+}
+
+export interface SupplierGroup {
+  id: string;
+  name: string;
+  children: SupplierItem[];
+}
+
 export interface InventoryDoc {
   source: string;
   sheetLastUpdated: string | null;
   importedAt: string;
   updatedAt?: string;
   countries: Country[];
+  supplier: { groups: SupplierGroup[] };
 }
 
-export interface CellUpdate {
-  country: Country["id"];
-  /** Either the row id or the ASIN identifies the row. */
-  id?: string;
-  asin?: string;
-  field: NumericField;
-  value: number | null;
-}
+/** One cell edit. `country: "SUPPLIER"` targets the Supplier Inventory tab. */
+export type CellUpdate =
+  | { country: Country["id"]; id?: string; asin?: string; field: NumericField; value: number | null }
+  | { country: "SUPPLIER"; id?: string; asin?: string; field: SupplierNumberField; value: number | null }
+  | { country: "SUPPLIER"; id?: string; asin?: string; field: SupplierTextField; value: string | null };

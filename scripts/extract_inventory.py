@@ -72,6 +72,8 @@ for title_row, header_row, start, end, cid, label, mkts in SECTIONS:
             child = {"id": f"{cid}-r{r}", "name": a, "asin": b, "sourceRow": r}
             for i, f in enumerate(FIELDS):
                 child[f] = num(ws.cell(r, 3 + i).value)
+            child["sending"] = num(ws.cell(r, 13).value)  # M  Sending inventory 1
+            child["futureOrder"] = num(ws.cell(r, 15).value)  # O  Future order
             current["children"].append(child)
         prev_blank = False
     for g in groups:
@@ -90,15 +92,76 @@ for title_row, header_row, start, end, cid, label, mkts in SECTIONS:
         "groups": groups,
     })
 
+# ── Supplier inventory: side table R..X next to the USA section, laid out on the USA parents ──
+def norm(t):
+    return " ".join(str(t or "").lower().replace("door ", "").split())
+
+side = []
+for r in range(5, 61):
+    name = clean(ws.cell(r, 18).value)  # R
+    if not name:
+        continue
+    side.append({
+        "row": r, "name": name.replace("\n", " ").strip(), "asin": clean(ws.cell(r, 19).value),  # S
+        "ready": num(ws.cell(r, 20).value), "underProduction": num(ws.cell(r, 21).value),  # T, U
+        "supplierName": (clean(ws.cell(r, 24).value) or None),  # X
+        "used": False,
+    })
+by_asin = {x["asin"]: x for x in side if x["asin"]}
+by_name = {norm(x["name"]): x for x in side if not x["asin"]}
+
+def supplier_item(cid, name, asin):
+    src = by_asin.get(asin) if asin else by_name.get(norm(name))
+    if src is None and not asin:
+        # floor stoppers: "Floor Stopper - …" vs "Floor Door Stopper - …"
+        src = next((x for x in side if not x["asin"] and norm(x["name"]).split("-", 1)[-1] == norm(name).split("-", 1)[-1]), None)
+    if src:
+        src["used"] = True
+    return {
+        "id": cid, "name": name, "asin": asin,
+        "ready": src["ready"] if src else None,
+        "underProduction": src["underProduction"] if src else None,
+        "supplierName": src["supplierName"].strip() if src and src["supplierName"] else None,
+        "supplierLink": None,
+    }
+
+sup_groups = []
+seen = set()
+for g in countries[0]["groups"]:
+    items = []
+    for c in g["children"]:
+        items.append(supplier_item("S-" + c["id"].split("-", 1)[1], c["name"], c["asin"]))
+        if c["asin"]:
+            seen.add(c["asin"])
+    sup_groups.append({"id": "S-" + g["id"].split("-", 1)[1], "name": g["name"], "children": items})
+
+extra = [x for x in side if not x["used"]]
+if extra:
+    sup_groups.append({"id": "S-extra", "name": "Other supplier items", "children": [
+        supplier_item(f"S-x{x['row']}", x["name"], x["asin"]) for x in extra]})
+
+others, names = [], {}
+for c in countries[1:]:
+    for g in c["groups"]:
+        for ch in g["children"]:
+            if ch["asin"] and ch["asin"] not in seen:
+                seen.add(ch["asin"])
+                others.append(supplier_item(f"S-{c['id']}-{ch['asin']}", ch["name"].strip(), ch["asin"]))
+if others:
+    sup_groups.append({"id": "S-other-mp", "name": "Sold outside the US only", "children": others})
+
 out = {
     "source": "Weekly Meeting Table - Strongest Home - New.xlsx / inventory",
     "sheetLastUpdated": clean(ws["B1"].value),
     "importedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     "countries": countries,
+    "supplier": {"groups": sup_groups},
 }
 with open(OUT, "w", encoding="utf-8") as fh:
     json.dump(out, fh, ensure_ascii=False, indent=2)
 
+print("supplier groups:", [(g["name"], len(g["children"])) for g in sup_groups])
+print("unmatched side rows:", [x["name"] for x in side if not x["used"]])
 for c in countries:
     print(c["id"], c["columnLabels"]["amazon"], "|", c["columnLabels"]["last30"])
     for g in c["groups"]:

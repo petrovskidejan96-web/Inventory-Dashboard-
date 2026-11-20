@@ -160,3 +160,18 @@ tr.parent td.m { opacity: 0.9; }
   background: #202124; color: #fff; padding: 10px 16px; border-radius: 6px; font-size: 13px; z-index: 50;
   max-width: 90vw;
 }
+
+/* ── added: manual columns + supplier tab ── */
+table.sheet.wide { min-width: 1380px; }
+.sheet th.manual { background: #fef7e0; }
+.sheet td.manual-col { background: #fffdf6; }
+.tab.supplier { margin-left: 12px; }
+.sheet td.m.total { color: var(--ink); font-weight: 700; }
+.sheet td.m.total.low { background: var(--low); color: var(--low-ink); }
+.sheet td.text-muted { color: var(--muted); font-weight: 400; font-size: 12px; padding: 0 6px; }
+.cell.text input { text-align: left; padding: 0 8px; }
+.cell.text.link input { color: var(--accent); padding-right: 24px; text-overflow: ellipsis; }
+.cell .open-link {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%);
+  text-decoration: none; color: var(--accent); font-weight: 700;
+}

@@ -1,23 +1,43 @@
 "use client";
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { monthsAmazon, monthsTotal, pipeline, stockLevel, sumChildren } from "@/lib/formulas";
-import { autoSource, type Child, type Country, type InventoryDoc, type NumericField } from "@/lib/types";
+import {
+  marketplaceTotals,
+  monthsAmazon,
+  monthsTotal,
+  pipeline,
+  productKey,
+  stockLevel,
+  sumChildren,
+  supplierTotal,
+} from "@/lib/formulas";
+import {
+  autoSource,
+  type CellMeta,
+  type Child,
+  type Country,
+  type InventoryDoc,
+  type NumericField,
+  type SupplierItem,
+} from "@/lib/types";
 
-const DOMAINS: Record<string, string> = {
-  US: "amazon.com",
-  UK: "amazon.co.uk",
-  EU: "amazon.de",
-  CA: "amazon.ca",
-};
+const DOMAINS: Record<string, string> = { US: "amazon.com", UK: "amazon.co.uk", EU: "amazon.de", CA: "amazon.ca" };
 
+/** Sheet columns C..H. */
 const COLUMNS: NumericField[] = ["amazon", "externalWarehouse", "receiving", "otw1", "otw2", "last30"];
+/** Typed-in columns shown after the two Month-to-stock formulas. */
+const AFTER_COLUMNS: { field: NumericField; label: string }[] = [
+  { field: "sending", label: "Sending Inventory" },
+  { field: "futureOrder", label: "Future order" },
+];
+
 const LOCAL_KEY = "inventory-local-edits-v1";
+type TabId = Country["id"] | "SUPPLIER";
+type CellValue = number | string | null;
+type LocalEdits = Record<string, Record<string, CellValue>>;
+type SaveFn = (tab: TabId, rowId: string, field: string, value: CellValue) => void;
 
-type LocalEdits = Record<string, Partial<Record<NumericField, number | null>>>;
-
-const fmtInt = (v: number | null | undefined) =>
-  typeof v === "number" ? Math.round(v).toLocaleString("en-US") : "";
+const fmtInt = (v: number | null | undefined) => (typeof v === "number" ? Math.round(v).toLocaleString("en-US") : "");
 const fmtMonths = (v: number | null) => (v === null ? "—" : v.toFixed(2));
 
 function readLocal(): LocalEdits {
@@ -35,15 +55,18 @@ function writeLocal(edits: LocalEdits) {
   }
 }
 
+function eachRow(doc: InventoryDoc, fn: (row: Child | SupplierItem) => void) {
+  for (const c of doc.countries) for (const g of c.groups) for (const ch of g.children) fn(ch);
+  for (const g of doc.supplier?.groups ?? []) for (const it of g.children) fn(it);
+}
+
 function applyLocal(doc: InventoryDoc, edits: LocalEdits): InventoryDoc {
   if (!Object.keys(edits).length) return doc;
   const copy = structuredClone(doc);
-  for (const c of copy.countries)
-    for (const g of c.groups)
-      for (const ch of g.children) {
-        const e = edits[ch.id];
-        if (e) Object.assign(ch, e);
-      }
+  eachRow(copy, (row) => {
+    const e = edits[row.id];
+    if (e) Object.assign(row, e);
+  });
   return copy;
 }
 
@@ -60,7 +83,7 @@ export default function Dashboard() {
   const [doc, setDoc] = useState<InventoryDoc | null>(null);
   const [persistent, setPersistent] = useState(true);
   const [amazonReady, setAmazonReady] = useState<Record<string, boolean>>({});
-  const [countryId, setCountryId] = useState<Country["id"]>("US");
+  const [tab, setTab] = useState<TabId>("US");
   const [open, setOpen] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState("");
   const [lowOnly, setLowOnly] = useState<null | "low" | "mid">(null);
@@ -77,11 +100,7 @@ export default function Dashboard() {
     try {
       const res = await fetch("/api/inventory", { cache: "no-store" });
       if (!res.ok) throw new Error(`Couldn't load inventory (${res.status})`);
-      const json = (await res.json()) as {
-        doc: InventoryDoc;
-        persistent: boolean;
-        amazon: Record<string, boolean>;
-      };
+      const json = (await res.json()) as { doc: InventoryDoc; persistent: boolean; amazon: Record<string, boolean> };
       setPersistent(json.persistent);
       setAmazonReady(json.amazon);
       setDoc(json.persistent ? json.doc : applyLocal(json.doc, readLocal()));
@@ -95,99 +114,75 @@ export default function Dashboard() {
     load();
   }, [load]);
 
-  const country = doc?.countries.find((c) => c.id === countryId) ?? null;
-
-  const saveCell = useCallback(
-    async (child: Child, field: NumericField, value: number | null) => {
+  const save: SaveFn = useCallback(
+    async (tabId, rowId, field, value) => {
       if (!doc) return;
-      // optimistic update
       const next = structuredClone(doc);
-      for (const c of next.countries)
-        for (const g of c.groups)
-          for (const ch of g.children)
-            if (ch.id === child.id) {
-              ch[field] = value;
-              ch.meta = { ...(ch.meta ?? {}), [field]: { source: "manual", at: new Date().toISOString() } };
-            }
+      eachRow(next, (row) => {
+        if (row.id !== rowId) return;
+        (row as unknown as Record<string, unknown>)[field] = value;
+        row.meta = { ...(row.meta ?? {}), [field]: { source: "manual", at: new Date().toISOString() } } as never;
+      });
       setDoc(next);
 
       if (!persistent) {
         const edits = readLocal();
-        edits[child.id] = { ...(edits[child.id] ?? {}), [field]: value };
+        edits[rowId] = { ...(edits[rowId] ?? {}), [field]: value };
         writeLocal(edits);
         return;
       }
       const res = await fetch("/api/inventory", {
         method: "PATCH",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ updates: [{ country: countryId, id: child.id, field, value }] }),
+        body: JSON.stringify({ updates: [{ country: tabId, id: rowId, field, value }] }),
       });
       if (!res.ok) {
         flash("Couldn't save that change — reloading.");
         load();
       }
     },
-    [doc, persistent, countryId, flash, load],
+    [doc, persistent, flash, load],
   );
 
+  const country = tab === "SUPPLIER" ? null : (doc?.countries.find((c) => c.id === tab) ?? null);
+
   const runSync = useCallback(async () => {
+    if (!country) return;
     setSyncing(true);
-    flash(`Syncing ${country?.label} from Amazon${countryId === "EU" ? " (4 marketplaces)" : ""}…`);
+    flash(`Syncing ${country.label} from Amazon${country.id === "EU" ? " (4 marketplaces)" : ""}…`);
     try {
-      const res = await fetch(`/api/sync?country=${countryId}`, { method: "POST" });
+      const res = await fetch(`/api/sync?country=${country.id}`, { method: "POST" });
       const json = (await res.json()) as { doc?: InventoryDoc; error?: string };
       if (json.doc) setDoc(json.doc);
-      const c = json.doc?.countries.find((x) => x.id === countryId);
+      const c = json.doc?.countries.find((x) => x.id === country.id);
       flash(json.error ?? c?.sync?.message ?? "Sync finished");
     } catch (e) {
       flash(e instanceof Error ? e.message : String(e));
     } finally {
       setSyncing(false);
     }
-  }, [countryId, country?.label, flash]);
+  }, [country, flash]);
 
-  const groups = useMemo(() => {
-    if (!country) return [];
-    const q = query.trim().toLowerCase();
-    return country.groups
-      .map((g) => {
-        let children = g.children;
-        if (q) {
-          const parentHit = g.name.toLowerCase().includes(q);
-          children = parentHit
-            ? children
-            : children.filter((c) => c.name.toLowerCase().includes(q) || (c.asin ?? "").toLowerCase().includes(q));
-        }
-        if (lowOnly) children = children.filter((c) => stockLevel(monthsTotal(c)) === lowOnly);
-        return { ...g, children, all: g.children };
-      })
-      .filter((g) => g.children.length > 0 || (!q && !lowOnly));
-  }, [country, query, lowOnly]);
+  if (error)
+    return (
+      <div className="page">
+        <div className="notice error">{error}</div>
+      </div>
+    );
+  if (!doc)
+    return (
+      <div className="page">
+        <div className="empty">Loading inventory…</div>
+      </div>
+    );
 
-  const filtering = Boolean(query.trim() || lowOnly);
-
-  const stats = useMemo(() => {
-    if (!country) return null;
-    const kids = country.groups.flatMap((g) => g.children).filter((c) => c.asin);
-    const t = sumChildren(kids);
-    const pipe = kids.reduce((s, c) => s + pipeline(c), 0);
-    const levels = kids.map((c) => stockLevel(monthsTotal(c)));
-    return {
-      amazon: t.amazon,
-      pipe,
-      last30: t.last30,
-      months: t.last30 > 0 ? t.amazon / t.last30 : null,
-      low: levels.filter((l) => l === "low").length,
-      mid: levels.filter((l) => l === "mid").length,
-      skus: kids.length,
-    };
-  }, [country]);
-
-  if (error) return <div className="page"><div className="notice error">{error}</div></div>;
-  if (!doc || !country || !stats) return <div className="page"><div className="empty">Loading inventory…</div></div>;
-
-  const labels = country.columnLabels;
-  const allOpen = groups.every((g) => open.has(g.id));
+  const tabs: { id: TabId; label: string }[] = [
+    ...doc.countries.map((c) => ({ id: c.id as TabId, label: c.label })),
+    { id: "SUPPLIER", label: "Supplier Inventory" },
+  ];
+  const visibleGroupIds =
+    tab === "SUPPLIER" ? (doc.supplier?.groups ?? []).map((g) => g.id) : (country?.groups ?? []).map((g) => g.id);
+  const allOpen = visibleGroupIds.length > 0 && visibleGroupIds.every((id) => open.has(id));
 
   const toggle = (id: string) =>
     setOpen((prev) => {
@@ -210,30 +205,29 @@ export default function Dashboard() {
         <div className="actions">
           <input
             className="search"
-            placeholder="Search product or ASIN"
+            placeholder="Search product, ASIN or supplier"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
-          <button
-            className="btn"
-            onClick={() => setOpen(allOpen ? new Set() : new Set(groups.map((g) => g.id)))}
-          >
+          <button className="btn" onClick={() => setOpen(allOpen ? new Set() : new Set(visibleGroupIds))}>
             {allOpen ? "Collapse all" : "Expand all"}
           </button>
-          <button
-            className="btn primary"
-            onClick={runSync}
-            disabled={syncing || !persistent || !amazonReady[countryId]}
-            title={
-              !persistent
-                ? "Connect storage first"
-                : !amazonReady[countryId]
-                  ? `Add SP-API credentials for ${country.label}`
-                  : "Pull Amazon, AWD, Business Report and Proboxx numbers now"
-            }
-          >
-            {syncing ? "Syncing…" : `Sync ${country.label}`}
-          </button>
+          {country && (
+            <button
+              className="btn primary"
+              onClick={runSync}
+              disabled={syncing || !persistent || !amazonReady[country.id]}
+              title={
+                !persistent
+                  ? "Connect storage first"
+                  : !amazonReady[country.id]
+                    ? `Add SP-API credentials for ${country.label}`
+                    : "Pull Amazon, AWD, Business Report and Proboxx numbers now"
+              }
+            >
+              {syncing ? "Syncing…" : `Sync ${country.label}`}
+            </button>
+          )}
         </div>
       </div>
 
@@ -243,28 +237,136 @@ export default function Dashboard() {
           saved in this browser only. Connect Upstash Redis in Vercel to share edits and enable automatic syncing.
         </div>
       )}
-      {persistent && !amazonReady[countryId] && (
+      {persistent && country && !amazonReady[country.id] && (
         <div className="notice info">
-          Amazon {country.label} isn&apos;t connected yet — add the SP-API credentials in Vercel to fill Amazon,
-          External Warehouse and Last 30 days sales automatically.
+          Amazon {country.label} isn&apos;t connected yet — add the SP-API credentials in Vercel to fill Amazon, External
+          Warehouse and Last 30 days sales automatically.
         </div>
       )}
 
       <div className="tabs">
-        {doc.countries.map((c) => (
+        {tabs.map((t) => (
           <button
-            key={c.id}
-            className={`tab ${c.id === countryId ? "active" : ""}`}
+            key={t.id}
+            className={`tab ${t.id === tab ? "active" : ""} ${t.id === "SUPPLIER" ? "supplier" : ""}`}
             onClick={() => {
-              setCountryId(c.id);
+              setTab(t.id);
               setLowOnly(null);
             }}
           >
-            {c.label}
+            {t.label}
           </button>
         ))}
       </div>
 
+      {country ? (
+        <CountryView
+          country={country}
+          query={query}
+          lowOnly={lowOnly}
+          setLowOnly={setLowOnly}
+          open={open}
+          setOpen={setOpen}
+          toggle={toggle}
+          onSave={save}
+        />
+      ) : (
+        <SupplierView doc={doc} query={query} open={open} toggle={toggle} onSave={save} />
+      )}
+
+      <div className="legend">
+        <span>
+          <span className="sw" style={{ background: "var(--low)" }} />
+          under 2 months
+        </span>
+        <span>
+          <span className="sw" style={{ background: "var(--mid)" }} />
+          2–4 months
+        </span>
+        <span>
+          <span className="sw" style={{ background: "var(--ok)" }} />
+          4+ months
+        </span>
+        <span>
+          <span className="d" style={{ background: "var(--auto)" }} />
+          filled by Amazon
+        </span>
+        <span>
+          <span className="d" style={{ background: "var(--proboxx)" }} />
+          filled by Proboxx
+        </span>
+        <span>
+          <span className="d" style={{ background: "#f29900" }} />
+          edited by hand or API
+        </span>
+        <span>Click any number to edit it.</span>
+      </div>
+
+      {toast && <div className="toast">{toast}</div>}
+    </div>
+  );
+}
+
+// ── Country tabs ───────────────────────────────────────────────────────────────
+
+function CountryView({
+  country,
+  query,
+  lowOnly,
+  setLowOnly,
+  open,
+  setOpen,
+  toggle,
+  onSave,
+}: {
+  country: Country;
+  query: string;
+  lowOnly: null | "low" | "mid";
+  setLowOnly: (v: null | "low" | "mid") => void;
+  open: Set<string>;
+  setOpen: (s: Set<string>) => void;
+  toggle: (id: string) => void;
+  onSave: SaveFn;
+}) {
+  const labels = country.columnLabels;
+  const q = query.trim().toLowerCase();
+  const filtering = Boolean(q || lowOnly);
+
+  const groups = useMemo(
+    () =>
+      country.groups
+        .map((g) => {
+          let children = g.children;
+          if (q && !g.name.toLowerCase().includes(q))
+            children = children.filter(
+              (c) => c.name.toLowerCase().includes(q) || (c.asin ?? "").toLowerCase().includes(q),
+            );
+          if (lowOnly) children = children.filter((c) => stockLevel(monthsTotal(c)) === lowOnly);
+          return { ...g, children, all: g.children };
+        })
+        .filter((g) => g.children.length > 0 || !filtering),
+    [country, q, lowOnly, filtering],
+  );
+
+  const stats = useMemo(() => {
+    const kids = country.groups.flatMap((g) => g.children).filter((c) => c.asin);
+    const t = sumChildren(kids);
+    const levels = kids.map((c) => stockLevel(monthsTotal(c)));
+    return {
+      amazon: t.amazon,
+      pipe: kids.reduce((s, c) => s + pipeline(c), 0),
+      last30: t.last30,
+      months: t.last30 > 0 ? t.amazon / t.last30 : null,
+      low: levels.filter((l) => l === "low").length,
+      mid: levels.filter((l) => l === "mid").length,
+      skus: kids.length,
+    };
+  }, [country]);
+
+  const save = (rowId: string, field: string, value: CellValue) => onSave(country.id, rowId, field, value);
+
+  return (
+    <>
       <div className="cards">
         <div className="card">
           <div className="label">{labels.amazon}</div>
@@ -287,24 +389,22 @@ export default function Dashboard() {
           <div className="hint">whole country</div>
         </div>
         <div
-          className={`card low clickable`}
+          className="card low clickable"
           onClick={() => {
             setLowOnly(lowOnly === "low" ? null : "low");
             setOpen(new Set(country.groups.map((g) => g.id)));
           }}
-          title="Show only these products"
         >
           <div className="label">Under 2 months (total)</div>
           <div className="value">{stats.low}</div>
           <div className="hint">{lowOnly === "low" ? "showing only these · click to clear" : "click to filter"}</div>
         </div>
         <div
-          className={`card mid clickable`}
+          className="card mid clickable"
           onClick={() => {
             setLowOnly(lowOnly === "mid" ? null : "mid");
             setOpen(new Set(country.groups.map((g) => g.id)));
           }}
-          title="Show only these products"
         >
           <div className="label">2–4 months (total)</div>
           <div className="value">{stats.mid}</div>
@@ -318,25 +418,28 @@ export default function Dashboard() {
       </div>
 
       <div className="sheet-wrap">
-        <table className="sheet">
+        <table className="sheet wide">
           <colgroup>
-            <col style={{ width: "26%" }} />
-            <col style={{ width: "9%" }} />
+            <col style={{ width: "21%" }} />
+            <col style={{ width: "7.5%" }} />
             {COLUMNS.map((f) => (
-              <col key={f} style={{ width: "7.5%" }} />
+              <col key={f} style={{ width: "6.3%" }} />
             ))}
-            <col style={{ width: "10%" }} />
-            <col style={{ width: "10%" }} />
+            <col style={{ width: "8%" }} />
+            <col style={{ width: "8%" }} />
+            {AFTER_COLUMNS.map((c) => (
+              <col key={c.field} style={{ width: "6.5%" }} />
+            ))}
           </colgroup>
           <thead>
             <tr>
               <th className="items">{labels.items}</th>
               <th>{labels.asin}</th>
               {COLUMNS.map((f) => {
-                const src = autoSource(countryId, f);
+                const src = autoSource(country.id, f);
                 return (
                   <th key={f}>
-                    {labels[f]}
+                    {labels[f as keyof typeof labels]}
                     {src && <span className="src">{src.replace("SP-API · ", "")}</span>}
                   </th>
                 );
@@ -349,18 +452,26 @@ export default function Dashboard() {
                 {labels.monthsTotal}
                 <span className="src">SUM(Amazon : OTW-2) ÷ {labels.last30}</span>
               </th>
+              {AFTER_COLUMNS.map((c) => (
+                <th key={c.field} className="manual">
+                  {c.label}
+                  <span className="src">entered manually</span>
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
             {groups.length === 0 && (
               <tr>
-                <td colSpan={10} className="empty">No products match.</td>
+                <td colSpan={12} className="empty">
+                  No products match.
+                </td>
               </tr>
             )}
             {groups.map((g) => {
               const isOpen = open.has(g.id) || filtering;
               const tot = sumChildren(g.all.filter((c) => c.asin));
-              const totChild = { ...tot } as unknown as Child;
+              const totChild = tot as unknown as Child;
               const mA = monthsAmazon(totChild);
               const mT = monthsTotal(totChild);
               return (
@@ -373,100 +484,331 @@ export default function Dashboard() {
                     <td />
                     {COLUMNS.map((f) => (
                       <td key={f} className="num">
-                        {fmtInt(tot[f])}
+                        {fmtInt(tot[f as keyof typeof tot])}
                       </td>
                     ))}
                     <td className={`m ${stockLevel(mA)}`}>{fmtMonths(mA)}</td>
                     <td className={`m ${stockLevel(mT)}`}>{fmtMonths(mT)}</td>
+                    {AFTER_COLUMNS.map((c) => (
+                      <td key={c.field} className="num">
+                        {fmtInt(tot[c.field as keyof typeof tot]) || ""}
+                      </td>
+                    ))}
                   </tr>
                   {isOpen &&
-                    g.children.map((ch) => (
-                      <ChildRow
-                        key={ch.id}
-                        child={ch}
-                        countryId={countryId}
-                        domain={DOMAINS[countryId]}
-                        onSave={saveCell}
-                      />
-                    ))}
+                    g.children.map((ch) => {
+                      const a = monthsAmazon(ch);
+                      const t = monthsTotal(ch);
+                      return (
+                        <tr className="child" key={ch.id}>
+                          <td className="items">{ch.name}</td>
+                          <td className="asin">
+                            <AsinLink asin={ch.asin} domain={DOMAINS[country.id]} />
+                          </td>
+                          {COLUMNS.map((f) => (
+                            <td key={f} className="num">
+                              <NumberCell
+                                rowId={ch.id}
+                                field={f}
+                                label={ch.name}
+                                value={ch[f]}
+                                meta={ch.meta?.[f]}
+                                auto={autoSource(country.id, f)}
+                                onSave={save}
+                              />
+                            </td>
+                          ))}
+                          <td className={`m ${stockLevel(a)}`}>{ch.asin ? fmtMonths(a) : ""}</td>
+                          <td className={`m ${stockLevel(t)}`}>{ch.asin ? fmtMonths(t) : ""}</td>
+                          {AFTER_COLUMNS.map((c) => (
+                            <td key={c.field} className="num manual-col">
+                              <NumberCell
+                                rowId={ch.id}
+                                field={c.field}
+                                label={ch.name}
+                                value={ch[c.field] ?? null}
+                                meta={ch.meta?.[c.field]}
+                                auto={null}
+                                onSave={save}
+                              />
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
                 </Fragment>
               );
             })}
           </tbody>
         </table>
       </div>
+    </>
+  );
+}
 
-      <div className="legend">
-        <span><span className="sw" style={{ background: "var(--low)" }} />under 2 months</span>
-        <span><span className="sw" style={{ background: "var(--mid)" }} />2–4 months</span>
-        <span><span className="sw" style={{ background: "var(--ok)" }} />4+ months</span>
-        <span><span className="d" style={{ background: "var(--auto)" }} />filled by Amazon</span>
-        <span><span className="d" style={{ background: "var(--proboxx)" }} />filled by Proboxx</span>
-        <span><span className="d" style={{ background: "#f29900" }} />edited by hand or API</span>
-        <span>Click any number to edit it.</span>
+// ── Supplier Inventory tab ─────────────────────────────────────────────────────
+
+function SupplierView({
+  doc,
+  query,
+  open,
+  toggle,
+  onSave,
+}: {
+  doc: InventoryDoc;
+  query: string;
+  open: Set<string>;
+  toggle: (id: string) => void;
+  onSave: SaveFn;
+}) {
+  const totals = useMemo(() => marketplaceTotals(doc.countries), [doc.countries]);
+  const q = query.trim().toLowerCase();
+  const sendingOf = (it: SupplierItem) => totals.sending.get(productKey(it)) ?? 0;
+  const newOrderOf = (it: SupplierItem) => totals.futureOrder.get(productKey(it)) ?? 0;
+
+  const groups = useMemo(
+    () =>
+      (doc.supplier?.groups ?? [])
+        .map((g) => {
+          const children =
+            q && !g.name.toLowerCase().includes(q)
+              ? g.children.filter(
+                  (c) =>
+                    c.name.toLowerCase().includes(q) ||
+                    (c.asin ?? "").toLowerCase().includes(q) ||
+                    (c.supplierName ?? "").toLowerCase().includes(q),
+                )
+              : g.children;
+          return { ...g, children, all: g.children };
+        })
+        .filter((g) => g.children.length > 0 || !q),
+    [doc.supplier, q],
+  );
+
+  const all = (doc.supplier?.groups ?? []).flatMap((g) => g.children);
+  const sum = (items: SupplierItem[], f: (i: SupplierItem) => number) => items.reduce((s, i) => s + f(i), 0);
+  const stats = {
+    ready: sum(all, (i) => i.ready ?? 0),
+    production: sum(all, (i) => i.underProduction ?? 0),
+    total: sum(all, (i) => supplierTotal(i, sendingOf(i))),
+    newOrder: sum(all, newOrderOf),
+    suppliers: new Set(all.map((i) => (i.supplierName ?? "").trim().toLowerCase()).filter(Boolean)).size,
+  };
+  const save = (rowId: string, field: string, value: CellValue) => onSave("SUPPLIER", rowId, field, value);
+
+  return (
+    <>
+      <div className="cards">
+        <div className="card">
+          <div className="label">Ready / Waiting for packing</div>
+          <div className="value">{fmtInt(stats.ready)}</div>
+          <div className="hint">units at suppliers</div>
+        </div>
+        <div className="card">
+          <div className="label">Under production</div>
+          <div className="value">{fmtInt(stats.production)}</div>
+          <div className="hint">units being made</div>
+        </div>
+        <div className={`card ${stats.total < 0 ? "low" : ""}`}>
+          <div className="label">Total Inventory Supplier</div>
+          <div className="value">{fmtInt(stats.total)}</div>
+          <div className="hint">after Sending Inventory, all MP</div>
+        </div>
+        <div className="card">
+          <div className="label">New Order from Supplier All MP</div>
+          <div className="value">{fmtInt(stats.newOrder)}</div>
+          <div className="hint">Future order, all marketplaces</div>
+        </div>
+        <div className="card">
+          <div className="label">Suppliers</div>
+          <div className="value">{stats.suppliers}</div>
+          <div className="hint">{all.length} products</div>
+        </div>
       </div>
 
-      {toast && <div className="toast">{toast}</div>}
-    </div>
+      <div className="syncline">
+        Total Inventory Supplier = Ready + Under production − Sending Inventory (USA + UK + DE+FR+IT+ES + Canada). New
+        Order = Future order summed over the same marketplaces.
+      </div>
+
+      <div className="sheet-wrap">
+        <table className="sheet">
+          <colgroup>
+            <col style={{ width: "24%" }} />
+            <col style={{ width: "9%" }} />
+            <col style={{ width: "9%" }} />
+            <col style={{ width: "9%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "11%" }} />
+            <col style={{ width: "18%" }} />
+          </colgroup>
+          <thead>
+            <tr>
+              <th className="items">Items</th>
+              <th>ASIN</th>
+              <th className="manual">
+                Ready/Waiting for packing supplier<span className="src">entered manually</span>
+              </th>
+              <th className="manual">
+                Under production supplier<span className="src">entered manually</span>
+              </th>
+              <th className="formula">
+                Total Inventory Supplier<span className="src">Ready + Under production − Sending Inventory (all MP)</span>
+              </th>
+              <th className="formula">
+                New Order from Supplier All MP<span className="src">SUM of Future order, all MP</span>
+              </th>
+              <th className="manual">
+                Supplier Name<span className="src">entered manually</span>
+              </th>
+              <th className="manual">
+                Supplier Link<span className="src">entered manually</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {groups.length === 0 && (
+              <tr>
+                <td colSpan={8} className="empty">
+                  No products match.
+                </td>
+              </tr>
+            )}
+            {groups.map((g) => {
+              const isOpen = open.has(g.id) || Boolean(q);
+              const ready = sum(g.all, (i) => i.ready ?? 0);
+              const prod = sum(g.all, (i) => i.underProduction ?? 0);
+              const total = sum(g.all, (i) => supplierTotal(i, sendingOf(i)));
+              const newOrder = sum(g.all, newOrderOf);
+              const names = [...new Set(g.all.map((i) => i.supplierName?.trim()).filter(Boolean))];
+              return (
+                <Fragment key={g.id}>
+                  <tr className={`parent ${isOpen ? "open" : ""}`} onClick={() => toggle(g.id)}>
+                    <td className="items">
+                      <span className="chev">▸</span> {g.name}
+                      <span className="count">{g.all.length} items</span>
+                    </td>
+                    <td />
+                    <td className="num">{fmtInt(ready)}</td>
+                    <td className="num">{fmtInt(prod)}</td>
+                    <td className={`m total ${total < 0 ? "low" : ""}`}>{fmtInt(total)}</td>
+                    <td className="m total">{fmtInt(newOrder)}</td>
+                    <td className="text-muted">{names.join(", ")}</td>
+                    <td />
+                  </tr>
+                  {isOpen &&
+                    g.children.map((it) => {
+                      const sending = sendingOf(it);
+                      const total = supplierTotal(it, sending);
+                      const newOrder = newOrderOf(it);
+                      return (
+                        <tr className="child" key={it.id}>
+                          <td className="items">{it.name}</td>
+                          <td className="asin">
+                            <AsinLink asin={it.asin} domain={DOMAINS.US} />
+                          </td>
+                          <td className="num manual-col">
+                            <NumberCell
+                              rowId={it.id}
+                              field="ready"
+                              label={it.name}
+                              value={it.ready}
+                              meta={it.meta?.ready}
+                              auto={null}
+                              onSave={save}
+                            />
+                          </td>
+                          <td className="num manual-col">
+                            <NumberCell
+                              rowId={it.id}
+                              field="underProduction"
+                              label={it.name}
+                              value={it.underProduction}
+                              meta={it.meta?.underProduction}
+                              auto={null}
+                              onSave={save}
+                            />
+                          </td>
+                          <td
+                            className={`m total ${total < 0 ? "low" : ""}`}
+                            title={`${fmtInt(it.ready ?? 0)} ready + ${fmtInt(it.underProduction ?? 0)} in production − ${fmtInt(sending)} sending`}
+                          >
+                            {fmtInt(total)}
+                          </td>
+                          <td className="m total">{fmtInt(newOrder)}</td>
+                          <td className="manual-col">
+                            <TextCell
+                              rowId={it.id}
+                              field="supplierName"
+                              label={it.name}
+                              value={it.supplierName}
+                              placeholder=""
+                              onSave={save}
+                            />
+                          </td>
+                          <td className="manual-col">
+                            <TextCell
+                              rowId={it.id}
+                              field="supplierLink"
+                              label={it.name}
+                              value={it.supplierLink}
+                              placeholder="paste link"
+                              link
+                              onSave={save}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
 
-function ChildRow({
-  child,
-  countryId,
-  domain,
-  onSave,
-}: {
-  child: Child;
-  countryId: string;
-  domain: string;
-  onSave: (child: Child, field: NumericField, value: number | null) => void;
-}) {
-  const mA = monthsAmazon(child);
-  const mT = monthsTotal(child);
+// ── Cells ─────────────────────────────────────────────────────────────────────
+
+function AsinLink({ asin, domain }: { asin: string | null; domain: string }) {
+  if (!asin) return null;
   return (
-    <tr className="child">
-      <td className="items">{child.name}</td>
-      <td className="asin">
-        {child.asin ? (
-          <a href={`https://www.${domain}/dp/${child.asin}`} target="_blank" rel="noreferrer">
-            {child.asin}
-          </a>
-        ) : null}
-      </td>
-      {COLUMNS.map((f) => (
-        <td key={f} className="num">
-          <EditableCell child={child} field={f} countryId={countryId} onSave={onSave} />
-        </td>
-      ))}
-      <td className={`m ${stockLevel(mA)}`}>{child.asin ? fmtMonths(mA) : ""}</td>
-      <td className={`m ${stockLevel(mT)}`}>{child.asin ? fmtMonths(mT) : ""}</td>
-    </tr>
+    <a href={`https://www.${domain}/dp/${asin}`} target="_blank" rel="noreferrer">
+      {asin}
+    </a>
   );
 }
 
-function EditableCell({
-  child,
+function sourceTitle(meta: CellMeta | undefined, auto: string | null) {
+  if (meta)
+    return `${meta.source === "manual" ? "Edited" : `From ${meta.source}`} · ${new Date(meta.at).toLocaleString("en-GB")}`;
+  return auto ? `From spreadsheet · auto-filled by ${auto} after sync` : "From spreadsheet";
+}
+
+function NumberCell({
+  rowId,
   field,
-  countryId,
+  label,
+  value,
+  meta,
+  auto,
   onSave,
 }: {
-  child: Child;
-  field: NumericField;
-  countryId: string;
-  onSave: (child: Child, field: NumericField, value: number | null) => void;
+  rowId: string;
+  field: string;
+  label: string;
+  value: number | null;
+  meta?: CellMeta;
+  auto: string | null;
+  onSave: (rowId: string, field: string, value: CellValue) => void;
 }) {
-  const value = child[field];
   const [draft, setDraft] = useState<string | null>(null);
   const cancelled = useRef(false);
-  const meta = child.meta?.[field];
   const dotClass =
     meta?.source === "amazon" ? "dot" : meta?.source === "proboxx" ? "dot proboxx" : meta ? "dot manual" : null;
-  const title = meta
-    ? `${meta.source === "manual" ? "Edited" : `From ${meta.source}`} · ${new Date(meta.at).toLocaleString("en-GB")}`
-    : autoSource(countryId, field)
-      ? `From spreadsheet · auto-filled by ${autoSource(countryId, field)} after sync`
-      : "From spreadsheet";
 
   const commit = () => {
     if (cancelled.current) {
@@ -480,18 +822,19 @@ function EditableCell({
     setDraft(null);
     if (next !== null && !Number.isFinite(next)) return;
     if (next === value) return;
-    onSave(child, field, next);
+    onSave(rowId, field, next);
   };
 
   return (
-    <div className="cell" title={title}>
+    <div className="cell" title={sourceTitle(meta, auto)}>
       {dotClass && <span className={dotClass} />}
       <input
         inputMode="numeric"
         value={draft ?? fmtInt(value)}
         onFocus={(e) => {
           setDraft(value === null ? "" : String(value));
-          requestAnimationFrame(() => e.target.select());
+          const el = e.target;
+          requestAnimationFrame(() => el.select());
         }}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={commit}
@@ -502,8 +845,68 @@ function EditableCell({
             (e.target as HTMLInputElement).blur();
           }
         }}
-        aria-label={`${child.name} ${field}`}
+        aria-label={`${label} ${field}`}
       />
+    </div>
+  );
+}
+
+function TextCell({
+  rowId,
+  field,
+  label,
+  value,
+  placeholder,
+  link,
+  onSave,
+}: {
+  rowId: string;
+  field: string;
+  label: string;
+  value: string | null;
+  placeholder: string;
+  link?: boolean;
+  onSave: (rowId: string, field: string, value: CellValue) => void;
+}) {
+  const [draft, setDraft] = useState<string | null>(null);
+  const cancelled = useRef(false);
+  const href = link && value ? (/^https?:\/\//i.test(value) ? value : `https://${value}`) : null;
+
+  const commit = () => {
+    if (cancelled.current) {
+      cancelled.current = false;
+      setDraft(null);
+      return;
+    }
+    if (draft === null) return;
+    const next = draft.trim() === "" ? null : draft.trim();
+    setDraft(null);
+    if (next === value) return;
+    onSave(rowId, field, next);
+  };
+
+  return (
+    <div className={`cell text ${link ? "link" : ""}`}>
+      <input
+        value={draft ?? value ?? ""}
+        placeholder={placeholder}
+        onFocus={() => setDraft(value ?? "")}
+        onChange={(e) => setDraft(e.target.value)}
+        onBlur={commit}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") (e.target as HTMLInputElement).blur();
+          if (e.key === "Escape") {
+            cancelled.current = true;
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
+        aria-label={`${label} ${field}`}
+      />
+      {href && draft === null && (
+        <a className="open-link" href={href} target="_blank" rel="noreferrer" title="Open link">
+          ↗
+        </a>
+      )}
     </div>
   );
 }

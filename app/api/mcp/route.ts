@@ -6,9 +6,9 @@
  */
 import { NextResponse } from "next/server";
 import { hasBasicAuth, hasIngestToken } from "@/lib/auth";
-import { monthsAmazon, monthsTotal } from "@/lib/formulas";
+import { marketplaceTotals, monthsAmazon, monthsTotal, productKey, supplierTotal } from "@/lib/formulas";
 import { applyUpdates, loadDoc, saveDoc, storageConfigured, validateUpdate } from "@/lib/store";
-import { NUMERIC_FIELDS, type CellUpdate, type InventoryDoc } from "@/lib/types";
+import { NUMERIC_FIELDS, SUPPLIER_NUMBER_FIELDS, SUPPLIER_TEXT_FIELDS, type CellUpdate, type InventoryDoc } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +27,14 @@ const TOOLS = [
     },
   },
   {
+    name: "get_supplier_inventory",
+    description:
+      "Read the Supplier Inventory tab: per product Ready/Waiting for packing, Under production, Total Inventory Supplier " +
+      "(Ready + Under production − Sending Inventory across all marketplaces), New Order from Supplier All MP " +
+      "(sum of Future order across marketplaces), Supplier Name and Supplier Link.",
+    inputSchema: { type: "object", properties: {} },
+  },
+  {
     name: "list_low_stock",
     description: "List products whose Month to stock (Amazon only, or total pipeline) is below a threshold.",
     inputSchema: {
@@ -42,7 +50,8 @@ const TOOLS = [
     name: "update_inventory",
     description:
       "Write numbers into the dashboard. Identify a row by ASIN (updates every row with that ASIN in the country) " +
-      "or by row id from get_inventory. Fields: " + NUMERIC_FIELDS.join(", ") + ".",
+      "or by row id. Country tabs (US/UK/EU/CA) take fields: " + NUMERIC_FIELDS.join(", ") + ". " +
+      "country SUPPLIER takes " + [...SUPPLIER_NUMBER_FIELDS, ...SUPPLIER_TEXT_FIELDS].join(", ") + " (names/links as text).",
     inputSchema: {
       type: "object",
       required: ["updates"],
@@ -53,11 +62,11 @@ const TOOLS = [
             type: "object",
             required: ["country", "field", "value"],
             properties: {
-              country: { type: "string", enum: COUNTRY_ENUM },
+              country: { type: "string", enum: [...COUNTRY_ENUM, "SUPPLIER"] },
               asin: { type: "string" },
               id: { type: "string" },
-              field: { type: "string", enum: [...NUMERIC_FIELDS] },
-              value: { type: ["number", "null"] },
+              field: { type: "string", enum: [...NUMERIC_FIELDS, ...SUPPLIER_NUMBER_FIELDS, ...SUPPLIER_TEXT_FIELDS] },
+              value: { type: ["number", "string", "null"] },
             },
           },
         },
@@ -89,14 +98,39 @@ function flatten(doc: InventoryDoc, country?: string) {
           last30: ch.last30,
           monthsToStockAmazon: round(monthsAmazon(ch)),
           monthsToStockTotal: round(monthsTotal(ch)),
+          sendingInventory: ch.sending ?? null,
+          futureOrder: ch.futureOrder ?? null,
         })),
       })),
     }));
 }
 
+function supplierView(doc: InventoryDoc) {
+  const t = marketplaceTotals(doc.countries);
+  return (doc.supplier?.groups ?? []).map((g) => ({
+    parent: g.name,
+    children: g.children.map((it) => {
+      const sending = t.sending.get(productKey(it)) ?? 0;
+      return {
+        id: it.id,
+        name: it.name,
+        asin: it.asin,
+        readyWaitingForPacking: it.ready,
+        underProduction: it.underProduction,
+        sendingInventoryAllMarketplaces: sending,
+        totalInventorySupplier: supplierTotal(it, sending),
+        newOrderFromSupplierAllMarketplaces: t.futureOrder.get(productKey(it)) ?? 0,
+        supplierName: it.supplierName,
+        supplierLink: it.supplierLink,
+      };
+    }),
+  }));
+}
+
 async function callTool(name: string, args: Record<string, unknown>) {
   const doc = await loadDoc();
   if (name === "get_inventory") return flatten(doc, args.country as string | undefined);
+  if (name === "get_supplier_inventory") return supplierView(doc);
   if (name === "list_low_stock") {
     const limit = typeof args.months === "number" ? args.months : 2;
     const basis = args.basis === "total" ? "total" : "amazon";

@@ -13,6 +13,22 @@ with the same columns as the sheet and the two Month-to-stock formulas calculate
 | Last 30 days sales | SP-API · **Business Reports** (Sales & Traffic, Units Ordered, child ASIN, last 30 full days) |
 | Month to stock only Amazon inventory | `Amazon ÷ Last 30 days sales` |
 | Month to stock by the last 30 days | `SUM(Amazon : OTW-2) ÷ Last 30 days sales` |
+| Sending Inventory | typed in |
+| Future order | typed in |
+
+### Supplier Inventory tab
+Same parent → child dropdowns (laid out on the USA parents; supplier-only items and ASINs sold only outside the US get their own groups).
+
+| Column | How |
+|---|---|
+| Ready/Waiting for packing supplier | typed in |
+| Under production supplier | typed in |
+| Total Inventory Supplier | `Ready + Under production − Sending Inventory` (Sending summed over USA, UK, DE+FR+IT+ES, Canada for that ASIN) |
+| New Order from Supplier All MP | `SUM(Future order)` over all marketplaces for that ASIN |
+| Supplier Name | typed in |
+| Supplier Link | typed in (opens with ↗) |
+
+Rows are matched across tabs by ASIN; items without an ASIN (floor stoppers) by name. A negative total turns red.
 
 Colours follow the sheet's conditional formatting: red under 2 months, yellow 2–4, green 4+.
 Every number can also be edited by clicking it; a small dot shows where each value came from.
@@ -69,13 +85,14 @@ curl -X POST https://<your-app>.vercel.app/api/ingest \
   -H "Authorization: Bearer $INGEST_TOKEN" -H "content-type: application/json" \
   -d '{"updates":[{"country":"UK","asin":"B08958WBQN","field":"externalWarehouse","value":1200}]}'
 ```
-`country`: `US` · `UK` · `EU` · `CA` — `field`: `amazon` · `externalWarehouse` · `receiving` · `otw1` · `otw2` · `last30`.
+`country`: `US` · `UK` · `EU` · `CA` — `field`: `amazon` · `externalWarehouse` · `receiving` · `otw1` · `otw2` · `last30` · `sending` · `futureOrder`.
+`country: "SUPPLIER"` — `field`: `ready` · `underProduction` (numbers) · `supplierName` · `supplierLink` (text).
 An ASIN update hits every row with that ASIN in the country; use `id` (from `/api/inventory`) to target one row.
 
 ### MCP (Claude connector)
 `/api/mcp` is an MCP server. In Claude: *Settings → Connectors → Add custom connector*,
 URL `https://<your-app>.vercel.app/api/mcp`, header `Authorization: Bearer <INGEST_TOKEN>`.
-Tools: `get_inventory`, `list_low_stock`, `update_inventory` — so Claude can read the dashboard,
+Tools: `get_inventory`, `get_supplier_inventory`, `list_low_stock`, `update_inventory` — so Claude can read the dashboard,
 flag low stock, and write in numbers it gets from other connectors.
 
 ---
