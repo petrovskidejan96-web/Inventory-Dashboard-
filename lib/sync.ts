@@ -1,6 +1,5 @@
 import { applyUpdates } from "./store";
 import {
-  MARKETPLACE_REGION,
   awdAvailableByAsin,
   fbaInventory,
   readBusinessReport,
@@ -36,13 +35,13 @@ function fill(country: Country, field: NumericField, values: Map<string, number>
 export async function syncCountry(doc: InventoryDoc, countryId: Country["id"], deadline: number) {
   const country = doc.countries.find((c) => c.id === countryId);
   if (!country) throw new Error(`Unknown country ${countryId}`);
-  const region = MARKETPLACE_REGION[country.marketplaceIds[0]];
   const notes: string[] = [];
   const updates: CellUpdate[] = [];
   const proboxxUpdates: CellUpdate[] = [];
 
-  if (!spapiConfigured(region)) {
-    country.sync = { ...country.sync, status: "error", message: `Amazon ${region} credentials are not set up yet.` };
+  const missing = country.marketplaceIds.filter((m) => !spapiConfigured(m));
+  if (missing.length) {
+    country.sync = { ...country.sync, status: "error", message: `Amazon credentials for ${country.label} are not set up yet.` };
     return { error: country.sync.message };
   }
 

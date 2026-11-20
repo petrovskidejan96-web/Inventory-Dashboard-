@@ -9,7 +9,7 @@ export async function GET() {
   return NextResponse.json({
     doc,
     persistent: storageConfigured(),
-    amazon: { NA: spapiConfigured("NA"), EU: spapiConfigured("EU") },
+    amazon: Object.fromEntries(doc.countries.map((c) => [c.id, c.marketplaceIds.every(spapiConfigured)])),
   });
 }
 

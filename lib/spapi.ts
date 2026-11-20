@@ -27,43 +27,77 @@ export const MARKETPLACE_REGION: Record<string, Region> = {
   A1RKKUPIHCS9HS: "EU", // ES
 };
 
-const tokenCache: Partial<Record<Region, { token: string; expires: number }>> = {};
+const MARKETPLACE_COUNTRY: Record<string, string> = {
+  ATVPDKIKX0DER: "US",
+  A2EUQ1WTGCTBG2: "CA",
+  A1F83G8C2ARO7P: "UK",
+  A1PA6795UKMFR9: "DE",
+  A13V1IB3VIYZZH: "FR",
+  APJ6JRA9NG5V4: "IT",
+  A1RKKUPIHCS9HS: "ES",
+};
 
-export function spapiConfigured(region: Region): boolean {
-  return Boolean(
-    process.env.SPAPI_CLIENT_ID && process.env.SPAPI_CLIENT_SECRET && process.env[`SPAPI_REFRESH_TOKEN_${region}`],
-  );
+export const US_MARKETPLACE = "ATVPDKIKX0DER";
+
+/**
+ * Credentials are looked up most-specific first, so each marketplace can use its own
+ * Seller Central account if needed:
+ *   SPAPI_REFRESH_TOKEN_CA  →  SPAPI_REFRESH_TOKEN_NA            (US, CA)
+ *   SPAPI_REFRESH_TOKEN_UK  →  SPAPI_REFRESH_TOKEN_EU            (UK, DE, FR, IT, ES)
+ *   SPAPI_CLIENT_ID_CA      →  SPAPI_CLIENT_ID                   (same for _SECRET)
+ * DE/FR/IT/ES also accept SPAPI_REFRESH_TOKEN_DE etc.
+ */
+function credentials(marketplaceId: string) {
+  const country = MARKETPLACE_COUNTRY[marketplaceId];
+  const region = MARKETPLACE_REGION[marketplaceId];
+  const first = (...names: string[]) => {
+    for (const n of names) if (process.env[n]) return { name: n, value: process.env[n]! };
+    return null;
+  };
+  const refresh = first(`SPAPI_REFRESH_TOKEN_${country}`, `SPAPI_REFRESH_TOKEN_${region}`);
+  const clientId = first(`SPAPI_CLIENT_ID_${country}`, `SPAPI_CLIENT_ID_${region}`, "SPAPI_CLIENT_ID");
+  const secret = first(`SPAPI_CLIENT_SECRET_${country}`, `SPAPI_CLIENT_SECRET_${region}`, "SPAPI_CLIENT_SECRET");
+  return { country, region, refresh, clientId, secret };
 }
 
-async function accessToken(region: Region): Promise<string> {
-  const cached = tokenCache[region];
-  if (cached && cached.expires > Date.now() + 60_000) return cached.token;
-  const refresh = process.env[`SPAPI_REFRESH_TOKEN_${region}`];
-  if (!refresh || !process.env.SPAPI_CLIENT_ID || !process.env.SPAPI_CLIENT_SECRET) {
+export function spapiConfigured(marketplaceId: string): boolean {
+  const c = credentials(marketplaceId);
+  return Boolean(c.refresh && c.clientId && c.secret);
+}
+
+const tokenCache: Record<string, { token: string; expires: number }> = {};
+
+async function accessToken(marketplaceId: string): Promise<string> {
+  const c = credentials(marketplaceId);
+  if (!c.refresh || !c.clientId || !c.secret) {
     throw new Error(
-      `SP-API credentials missing for ${region} (SPAPI_CLIENT_ID, SPAPI_CLIENT_SECRET, SPAPI_REFRESH_TOKEN_${region}).`,
+      `SP-API credentials missing for ${c.country}: set SPAPI_CLIENT_ID, SPAPI_CLIENT_SECRET and ` +
+        `SPAPI_REFRESH_TOKEN_${c.region} (or SPAPI_REFRESH_TOKEN_${c.country}).`,
     );
   }
+  const cacheKey = `${c.refresh.name}|${c.clientId.name}`;
+  const cached = tokenCache[cacheKey];
+  if (cached && cached.expires > Date.now() + 60_000) return cached.token;
   const res = await fetch(LWA_TOKEN_URL, {
     method: "POST",
     headers: { "content-type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
       grant_type: "refresh_token",
-      refresh_token: refresh,
-      client_id: process.env.SPAPI_CLIENT_ID,
-      client_secret: process.env.SPAPI_CLIENT_SECRET,
+      refresh_token: c.refresh.value,
+      client_id: c.clientId.value,
+      client_secret: c.secret.value,
     }),
   });
-  if (!res.ok) throw new Error(`Login with Amazon token request failed: ${res.status} ${await res.text()}`);
+  if (!res.ok) throw new Error(`Login with Amazon token request failed (${c.country}): ${res.status} ${await res.text()}`);
   const json = (await res.json()) as { access_token: string; expires_in: number };
-  tokenCache[region] = { token: json.access_token, expires: Date.now() + json.expires_in * 1000 };
+  tokenCache[cacheKey] = { token: json.access_token, expires: Date.now() + json.expires_in * 1000 };
   return json.access_token;
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 async function call<T>(
-  region: Region,
+  marketplaceId: string,
   method: "GET" | "POST",
   path: string,
   params: Record<string, string | undefined> = {},
@@ -71,12 +105,12 @@ async function call<T>(
 ): Promise<T> {
   const qs = new URLSearchParams();
   for (const [k, v] of Object.entries(params)) if (v !== undefined) qs.set(k, v);
-  const url = `${ENDPOINTS[region]}${path}${qs.size ? `?${qs}` : ""}`;
+  const url = `${ENDPOINTS[MARKETPLACE_REGION[marketplaceId]]}${path}${qs.size ? `?${qs}` : ""}`;
   for (let attempt = 0; attempt < 5; attempt++) {
     const res = await fetch(url, {
       method,
       headers: {
-        "x-amz-access-token": await accessToken(region),
+        "x-amz-access-token": await accessToken(marketplaceId),
         accept: "application/json",
         ...(body ? { "content-type": "application/json" } : {}),
       },
@@ -111,7 +145,6 @@ export interface FbaInventory {
 }
 
 export async function fbaInventory(marketplaceId: string): Promise<FbaInventory> {
-  const region = MARKETPLACE_REGION[marketplaceId];
   const stockByAsin = new Map<string, number>();
   const asinBySku = new Map<string, string>();
   let nextToken: string | undefined;
@@ -119,7 +152,7 @@ export async function fbaInventory(marketplaceId: string): Promise<FbaInventory>
     const page = await call<{
       payload?: { inventorySummaries?: InventorySummary[] };
       pagination?: { nextToken?: string };
-    }>(region, "GET", "/fba/inventory/v1/summaries", {
+    }>(marketplaceId, "GET", "/fba/inventory/v1/summaries", {
       details: "true",
       granularityType: "Marketplace",
       granularityId: marketplaceId,
@@ -150,7 +183,7 @@ export async function awdAvailableByAsin(asinBySku: Map<string, string>) {
     const page = await call<{
       inventory?: { sku?: string; inventoryDetails?: { availableDistributableQuantity?: number } }[];
       nextToken?: string;
-    }>("NA", "GET", "/awd/2024-05-09/inventory", { details: "SHOW", maxResults: "200", nextToken });
+    }>(US_MARKETPLACE, "GET", "/awd/2024-05-09/inventory", { details: "SHOW", maxResults: "200", nextToken });
     for (const item of page.inventory ?? []) {
       if (!item.sku) continue;
       const qty = item.inventoryDetails?.availableDistributableQuantity ?? 0;
@@ -171,14 +204,13 @@ export async function awdAvailableByAsin(asinBySku: Map<string, string>) {
 
 /** Requests the Business Report for the last 30 full days. Returns the reportId to poll. */
 export async function requestBusinessReport(marketplaceId: string): Promise<string> {
-  const region = MARKETPLACE_REGION[marketplaceId];
   const end = new Date();
   end.setUTCHours(0, 0, 0, 0);
   end.setUTCDate(end.getUTCDate() - 1); // yesterday
   const start = new Date(end);
   start.setUTCDate(start.getUTCDate() - 29); // 30 days inclusive
   const day = (d: Date) => d.toISOString().slice(0, 10);
-  const res = await call<{ reportId: string }>(region, "POST", "/reports/2021-06-30/reports", {}, {
+  const res = await call<{ reportId: string }>(marketplaceId, "POST", "/reports/2021-06-30/reports", {}, {
     reportType: "GET_SALES_AND_TRAFFIC_REPORT",
     marketplaceIds: [marketplaceId],
     dataStartTime: day(start),
@@ -195,9 +227,8 @@ export type ReportResult =
 
 /** Checks a report once; when it's ready, downloads it and returns Units Ordered per child ASIN. */
 export async function readBusinessReport(marketplaceId: string, reportId: string): Promise<ReportResult> {
-  const region = MARKETPLACE_REGION[marketplaceId];
   const report = await call<{ processingStatus: string; reportDocumentId?: string }>(
-    region,
+    marketplaceId,
     "GET",
     `/reports/2021-06-30/reports/${encodeURIComponent(reportId)}`,
   );
@@ -206,7 +237,7 @@ export async function readBusinessReport(marketplaceId: string, reportId: string
     return { state: "failed", message: `Business report ${report.processingStatus.toLowerCase()}` };
   }
   const doc = await call<{ url: string; compressionAlgorithm?: string }>(
-    region,
+    marketplaceId,
     "GET",
     `/reports/2021-06-30/documents/${encodeURIComponent(report.reportDocumentId)}`,
   );

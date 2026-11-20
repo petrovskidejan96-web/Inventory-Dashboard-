@@ -37,6 +37,7 @@ The starting data is the sheet as of *Last Updated 11.20.2026* (`data/inventory.
    | `SPAPI_CLIENT_ID`, `SPAPI_CLIENT_SECRET` | Your SP-API app (Developer Central → *Develop Apps*). |
    | `SPAPI_REFRESH_TOKEN_NA` | Refresh token for North America (US + Canada). |
    | `SPAPI_REFRESH_TOKEN_EU` | Refresh token for Europe (UK + DE/FR/IT/ES). |
+   | `SPAPI_REFRESH_TOKEN_CA`, `_UK`, `_DE`, … | *Optional.* Only when a country is on a separate Seller Central account – overrides the region token for that country. Pair with `SPAPI_CLIENT_ID_CA` / `SPAPI_CLIENT_SECRET_CA` if that account uses a different app. |
    | `PROBOXX_API_URL`, `PROBOXX_API_KEY` | Proboxx shipments endpoint + key (see below). |
 
 4. Redeploy. The **Sync** button pulls the current country now; Vercel Cron syncs every country daily

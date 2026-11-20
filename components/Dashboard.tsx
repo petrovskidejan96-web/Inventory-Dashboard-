@@ -59,7 +59,7 @@ function timeAgo(iso?: string) {
 export default function Dashboard() {
   const [doc, setDoc] = useState<InventoryDoc | null>(null);
   const [persistent, setPersistent] = useState(true);
-  const [amazonReady, setAmazonReady] = useState<{ NA: boolean; EU: boolean }>({ NA: false, EU: false });
+  const [amazonReady, setAmazonReady] = useState<Record<string, boolean>>({});
   const [countryId, setCountryId] = useState<Country["id"]>("US");
   const [open, setOpen] = useState<Set<string>>(new Set());
   const [query, setQuery] = useState("");
@@ -80,7 +80,7 @@ export default function Dashboard() {
       const json = (await res.json()) as {
         doc: InventoryDoc;
         persistent: boolean;
-        amazon: { NA: boolean; EU: boolean };
+        amazon: Record<string, boolean>;
       };
       setPersistent(json.persistent);
       setAmazonReady(json.amazon);
@@ -187,7 +187,6 @@ export default function Dashboard() {
   if (!doc || !country || !stats) return <div className="page"><div className="empty">Loading inventory…</div></div>;
 
   const labels = country.columnLabels;
-  const region = countryId === "US" || countryId === "CA" ? "NA" : "EU";
   const allOpen = groups.every((g) => open.has(g.id));
 
   const toggle = (id: string) =>
@@ -224,12 +223,12 @@ export default function Dashboard() {
           <button
             className="btn primary"
             onClick={runSync}
-            disabled={syncing || !persistent || !amazonReady[region]}
+            disabled={syncing || !persistent || !amazonReady[countryId]}
             title={
               !persistent
                 ? "Connect storage first"
-                : !amazonReady[region]
-                  ? `Add SP-API credentials for ${region}`
+                : !amazonReady[countryId]
+                  ? `Add SP-API credentials for ${country.label}`
                   : "Pull Amazon, AWD, Business Report and Proboxx numbers now"
             }
           >
@@ -244,10 +243,10 @@ export default function Dashboard() {
           saved in this browser only. Connect Upstash Redis in Vercel to share edits and enable automatic syncing.
         </div>
       )}
-      {persistent && !amazonReady[region] && (
+      {persistent && !amazonReady[countryId] && (
         <div className="notice info">
-          Amazon {region === "NA" ? "North America" : "Europe"} isn&apos;t connected yet — add the SP-API credentials in
-          Vercel to fill Amazon, External Warehouse and Last 30 days sales automatically.
+          Amazon {country.label} isn&apos;t connected yet — add the SP-API credentials in Vercel to fill Amazon,
+          External Warehouse and Last 30 days sales automatically.
         </div>
       )}
 
