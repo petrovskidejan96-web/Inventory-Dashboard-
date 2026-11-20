@@ -1,0 +1,2495 @@
+{
+  "source": "Weekly Meeting Table - Strongest Home - New.xlsx / inventory",
+  "sheetLastUpdated": "Last Updated: 11.20.2026",
+  "importedAt": "2026-11-20T13:10:44+00:00",
+  "countries": [
+    {
+      "id": "US",
+      "label": "USA",
+      "marketplaceIds": [
+        "ATVPDKIKX0DER"
+      ],
+      "columnLabels": {
+        "items": "Items",
+        "asin": "ASIN",
+        "amazon": "Amazon",
+        "externalWarehouse": "External Warehouse",
+        "receiving": "(receiving status) but 0 received",
+        "otw1": "OTW-1",
+        "otw2": "OTW-2",
+        "last30": "Last 30 days sales",
+        "monthsAmazon": "Month to stock only Amazon inventory",
+        "monthsTotal": "Month to stock by the last 30 days"
+      },
+      "groups": [
+        {
+          "id": "US-p4",
+          "name": "CLEAR PARENT",
+          "sourceRow": 4,
+          "children": [
+            {
+              "id": "US-r5",
+              "name": "Clear 6 pack 2\" (M)",
+              "asin": "B08958WBQN",
+              "sourceRow": 5,
+              "amazon": 8222,
+              "externalWarehouse": 2700,
+              "receiving": 0,
+              "otw1": 2325,
+              "otw2": 9300,
+              "last30": 4491
+            },
+            {
+              "id": "US-r6",
+              "name": "Clear 14 pack 2\" (M)",
+              "asin": "B0FC2C7VHT",
+              "sourceRow": 6,
+              "amazon": 1974,
+              "externalWarehouse": null,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 150
+            },
+            {
+              "id": "US-r7",
+              "name": "Clear 20 pack 2\"  (M)",
+              "asin": "B0F5753RF6",
+              "sourceRow": 7,
+              "amazon": 269,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 750,
+              "otw2": 0,
+              "last30": 191
+            },
+            {
+              "id": "US-r8",
+              "name": "Clear 12 pack 0.8\" (S)",
+              "asin": "B0C6265GPG",
+              "sourceRow": 8,
+              "amazon": 28,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 1200,
+              "otw2": 0,
+              "last30": 373
+            },
+            {
+              "id": "US-r9",
+              "name": "White 5 pack 3.15\" (L)",
+              "asin": "B0D2W4SXCW",
+              "sourceRow": 9,
+              "amazon": 485,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 450,
+              "otw2": 1300,
+              "last30": 288
+            },
+            {
+              "id": "US-r10",
+              "name": "White 7 pack 1.57\" (M)",
+              "asin": "B082WDJVSV",
+              "sourceRow": 10,
+              "amazon": 198,
+              "externalWarehouse": 600,
+              "receiving": 0,
+              "otw1": 1700,
+              "otw2": 0,
+              "last30": 285
+            },
+            {
+              "id": "US-r11",
+              "name": "Clear 10 pack 2\" (M)",
+              "asin": "B0DSFDSC9Q",
+              "sourceRow": 11,
+              "amazon": 1379,
+              "externalWarehouse": 1000,
+              "receiving": 0,
+              "otw1": 500,
+              "otw2": 0,
+              "last30": 379
+            },
+            {
+              "id": "US-r12",
+              "name": "White 12 pack 0.8\" (S)",
+              "asin": "B0FK5QDXL1",
+              "sourceRow": 12,
+              "amazon": 331,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 36
+            },
+            {
+              "id": "US-r13",
+              "name": "5” Clear 2 Pack (XL)",
+              "asin": "B0HP1VFHGH",
+              "sourceRow": 13,
+              "amazon": 0,
+              "externalWarehouse": 0,
+              "receiving": null,
+              "otw1": 560,
+              "otw2": 0,
+              "last30": 0
+            },
+            {
+              "id": "US-r14",
+              "name": "Clear 5 pack 3.15\" (L)",
+              "asin": "B0H8PM6X2H",
+              "sourceRow": 14,
+              "amazon": 0,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 1000,
+              "otw2": 1000,
+              "last30": 130
+            },
+            {
+              "id": "US-r15",
+              "name": "Cabinet Bumper White 200 pack 0.2״",
+              "asin": "B0FG75CVX6",
+              "sourceRow": 15,
+              "amazon": 97,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 8
+            },
+            {
+              "id": "US-r16",
+              "name": "Cabinet Bumper Clear 200 pack 0.2״",
+              "asin": "B0FC2HK3Y4",
+              "sourceRow": 16,
+              "amazon": 677,
+              "externalWarehouse": 2405,
+              "receiving": 0,
+              "otw1": 321,
+              "otw2": 0,
+              "last30": 92
+            }
+          ]
+        },
+        {
+          "id": "US-p17",
+          "name": "WHITE PARENT",
+          "sourceRow": 17,
+          "children": [
+            {
+              "id": "US-r18",
+              "name": "White 3 pack 5\" (XL)",
+              "asin": "B0DG32T25H",
+              "sourceRow": 18,
+              "amazon": 1464,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 5800,
+              "otw2": 100,
+              "last30": 2421
+            },
+            {
+              "id": "US-r19",
+              "name": "White 2 pack 5\" (XL)",
+              "asin": "B0HM75GC8R",
+              "sourceRow": 19,
+              "amazon": 0,
+              "externalWarehouse": 0,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 0
+            },
+            {
+              "id": "US-r20",
+              "name": "White 6 pack 5\" (XL)",
+              "asin": "B0FK3RY8Y5",
+              "sourceRow": 20,
+              "amazon": 279,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 50,
+              "otw2": 500,
+              "last30": 175
+            },
+            {
+              "id": "US-r21",
+              "name": "White 2 pack 7\" (XXL)",
+              "asin": "B0F2N1W834",
+              "sourceRow": 21,
+              "amazon": 0,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 2850,
+              "otw2": 0,
+              "last30": 469
+            },
+            {
+              "id": "US-r22",
+              "name": "White 6 pack 3.15\" (L)",
+              "asin": "B0F1CWW3FX",
+              "sourceRow": 22,
+              "amazon": 1295,
+              "externalWarehouse": 1200,
+              "receiving": 0,
+              "otw1": 550,
+              "otw2": null,
+              "last30": 999
+            },
+            {
+              "id": "US-r23",
+              "name": "White 10 pack 3.15\" (L)",
+              "asin": "B0HKWYKB48",
+              "sourceRow": 23,
+              "amazon": 0,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 600,
+              "otw2": 0,
+              "last30": 0
+            },
+            {
+              "id": "US-r24",
+              "name": "Clear 4 pack 3.15\" (L)",
+              "asin": "B0B5XZFX8J",
+              "sourceRow": 24,
+              "amazon": 509,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 100,
+              "otw2": 1000,
+              "last30": 418
+            },
+            {
+              "id": "US-r25",
+              "name": "White 12 pack 3.15\" (L)",
+              "asin": "B0H1HZV5MY",
+              "sourceRow": 25,
+              "amazon": 246,
+              "externalWarehouse": 75,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 64
+            },
+            {
+              "id": "US-r26",
+              "name": "White 4 pack 7\" (XXL)",
+              "asin": "B0H9SF8RL1",
+              "sourceRow": 26,
+              "amazon": 366,
+              "externalWarehouse": 75,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 68
+            }
+          ]
+        },
+        {
+          "id": "US-p28",
+          "name": "Silicone Door Knob Cover",
+          "sourceRow": 28,
+          "children": [
+            {
+              "id": "US-r29",
+              "name": "Clear Silicone Door Knob Cover 2 Pack",
+              "asin": "B0GLHKS74N",
+              "sourceRow": 29,
+              "amazon": 1333,
+              "externalWarehouse": 1250,
+              "receiving": 0,
+              "otw1": 750,
+              "otw2": 3000,
+              "last30": 903
+            },
+            {
+              "id": "US-r30",
+              "name": "Black Silicone Door Knob Cover 2 Pack",
+              "asin": "B0GLH971ZM",
+              "sourceRow": 30,
+              "amazon": 408,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 250,
+              "otw2": 1000,
+              "last30": 225
+            },
+            {
+              "id": "US-r31",
+              "name": "White Silicone Door Knob Cover 2 Pack",
+              "asin": "B0GLHMNY1W",
+              "sourceRow": 31,
+              "amazon": 157,
+              "externalWarehouse": 250,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 38
+            },
+            {
+              "id": "US-r32",
+              "name": "Clear Silicone Door Knob Cover 4 Pack",
+              "asin": "B0H1BZ5PB2",
+              "sourceRow": 32,
+              "amazon": 279,
+              "externalWarehouse": 625,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 86
+            },
+            {
+              "id": "US-r33",
+              "name": "Black Silicone Door Knob Cover 4 Pack",
+              "asin": "B0H1CHVK2Q",
+              "sourceRow": 33,
+              "amazon": 128,
+              "externalWarehouse": 250,
+              "receiving": 0,
+              "otw1": 107,
+              "otw2": 0,
+              "last30": 28
+            },
+            {
+              "id": "US-r34",
+              "name": "White Silicone Door Knob Cover 4 Pack",
+              "asin": "B0H1CC7BCB",
+              "sourceRow": 34,
+              "amazon": 69,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 8
+            },
+            {
+              "id": "US-r35",
+              "name": "Clear Silicone Door Knob Cover 10 Pack",
+              "asin": "B0H1CBF9XH",
+              "sourceRow": 35,
+              "amazon": 92,
+              "externalWarehouse": 100,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 24
+            },
+            {
+              "id": "US-r36",
+              "name": "Black Silicone Door Knob Cover 10 Pack",
+              "asin": "B0H1CGM5BL",
+              "sourceRow": 36,
+              "amazon": 54,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 17
+            }
+          ]
+        },
+        {
+          "id": "US-p38",
+          "name": "Rings",
+          "sourceRow": 38,
+          "children": [
+            {
+              "id": "US-r38",
+              "name": "Rings 6+4",
+              "asin": "B0FK3NXPLP",
+              "sourceRow": 38,
+              "amazon": 422,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 2100,
+              "otw2": 0,
+              "last30": 355
+            },
+            {
+              "id": "US-r39",
+              "name": "Rings 12+8",
+              "asin": "B0GBLSYLCN",
+              "sourceRow": 39,
+              "amazon": 187,
+              "externalWarehouse": 200,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 42
+            }
+          ]
+        },
+        {
+          "id": "US-p41",
+          "name": "Strip Bumpers",
+          "sourceRow": 41,
+          "children": [
+            {
+              "id": "US-r42",
+              "name": "Square bumper",
+              "asin": "B0H844S7Q6",
+              "sourceRow": 42,
+              "amazon": 785,
+              "externalWarehouse": 150,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 142
+            },
+            {
+              "id": "US-r43",
+              "name": "Small Strips Bumper",
+              "asin": "B0HGLVVNYN",
+              "sourceRow": 43,
+              "amazon": 165,
+              "externalWarehouse": 400,
+              "receiving": 0,
+              "otw1": 200,
+              "otw2": 0,
+              "last30": 26
+            },
+            {
+              "id": "US-r44",
+              "name": "Mix Strips Bumper",
+              "asin": "B0HGMVJ7DT",
+              "sourceRow": 44,
+              "amazon": 157,
+              "externalWarehouse": 1000,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 17
+            },
+            {
+              "id": "US-r45",
+              "name": "Mid Strips Bumper",
+              "asin": "B0HGM5QKRP",
+              "sourceRow": 45,
+              "amazon": 178,
+              "externalWarehouse": 400,
+              "receiving": 0,
+              "otw1": 200,
+              "otw2": 0,
+              "last30": 11
+            },
+            {
+              "id": "US-r46",
+              "name": "Large Strips Bumper - 40pcs",
+              "asin": "B0HGLTL417",
+              "sourceRow": 46,
+              "amazon": 49,
+              "externalWarehouse": 200,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 0
+            },
+            {
+              "id": "US-r47",
+              "name": "Large Strips Bumper - 20pcs",
+              "asin": "B0HGM4DMKY",
+              "sourceRow": 47,
+              "amazon": 83,
+              "externalWarehouse": 800,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 13
+            }
+          ]
+        },
+        {
+          "id": "US-p49",
+          "name": "REGULAR DOORSTOPPERS",
+          "sourceRow": 49,
+          "children": [
+            {
+              "id": "US-r50",
+              "name": "CHROME (2 Pack)",
+              "asin": "B073TXK7B6",
+              "sourceRow": 50,
+              "amazon": 5381,
+              "externalWarehouse": 4512,
+              "receiving": 0,
+              "otw1": 1248,
+              "otw2": 7608,
+              "last30": 1972
+            },
+            {
+              "id": "US-r51",
+              "name": "CHROME (4 Pack)",
+              "asin": "B095SKQKMG",
+              "sourceRow": 51,
+              "amazon": 171,
+              "externalWarehouse": 120,
+              "receiving": 0,
+              "otw1": 156,
+              "otw2": 600,
+              "last30": 109
+            },
+            {
+              "id": "US-r52",
+              "name": "CHROME (6 Pack)",
+              "asin": "B0BH2YJYF8",
+              "sourceRow": 52,
+              "amazon": 0,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 34
+            },
+            {
+              "id": "US-r53",
+              "name": "CHROME (10 Pack)",
+              "asin": "B0CP4B8WN6",
+              "sourceRow": 53,
+              "amazon": 145,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 20,
+              "otw2": 360,
+              "last30": 49
+            },
+            {
+              "id": "US-r54",
+              "name": "CHROME (1 Pack)",
+              "asin": "B0FXDNP365",
+              "sourceRow": 54,
+              "amazon": 1303,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 360,
+              "otw2": 0,
+              "last30": 259
+            },
+            {
+              "id": "US-r55",
+              "name": "BLACK (2 Pack)",
+              "asin": "B07H95YKYG",
+              "sourceRow": 55,
+              "amazon": 807,
+              "externalWarehouse": 150,
+              "receiving": 0,
+              "otw1": 50,
+              "otw2": 2000,
+              "last30": 367
+            },
+            {
+              "id": "US-r56",
+              "name": "BLACK (4 Pack)",
+              "asin": "B095SLDN41",
+              "sourceRow": 56,
+              "amazon": 173,
+              "externalWarehouse": 108,
+              "receiving": 0,
+              "otw1": 60,
+              "otw2": 408,
+              "last30": 105
+            },
+            {
+              "id": "US-r57",
+              "name": "Gold (1 Pack)",
+              "asin": "B0H6JB9PJC",
+              "sourceRow": 57,
+              "amazon": 94,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 280,
+              "otw2": 0,
+              "last30": 26
+            },
+            {
+              "id": "US-r58",
+              "name": "Gold (2 Pack)",
+              "asin": "B0H6JCK6CL",
+              "sourceRow": 58,
+              "amazon": 171,
+              "externalWarehouse": 500,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 78
+            }
+          ]
+        },
+        {
+          "id": "US-p60",
+          "name": "XL Doorstoppers",
+          "sourceRow": 60,
+          "children": [
+            {
+              "id": "US-r61",
+              "name": "XL Stopper CHROME (1 Pack)",
+              "asin": "B0DG5VTNRL",
+              "sourceRow": 61,
+              "amazon": 543,
+              "externalWarehouse": 2600,
+              "receiving": 0,
+              "otw1": 200,
+              "otw2": 0,
+              "last30": 112
+            },
+            {
+              "id": "US-r62",
+              "name": "XL StopperCHROME (2 Pack)",
+              "asin": "B0DG5WFTLG",
+              "sourceRow": 62,
+              "amazon": 182,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 78
+            }
+          ]
+        },
+        {
+          "id": "US-p64",
+          "name": "Folding Doorstoppers",
+          "sourceRow": 64,
+          "children": [
+            {
+              "id": "US-r65",
+              "name": "Folding CHROME (1 Pack)",
+              "asin": "B0FH7FB1JX",
+              "sourceRow": 65,
+              "amazon": 1742,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 1020,
+              "otw2": 0,
+              "last30": 269
+            },
+            {
+              "id": "US-r66",
+              "name": "Folding BLACK (1 Pack)",
+              "asin": "B0FH7BBPHF",
+              "sourceRow": 66,
+              "amazon": 7025,
+              "externalWarehouse": 3960,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 553
+            },
+            {
+              "id": "US-r67",
+              "name": "Folding CHROME (2 Pack)",
+              "asin": "B0FH7B73K9",
+              "sourceRow": 67,
+              "amazon": 1197,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 172
+            },
+            {
+              "id": "US-r68",
+              "name": "Folding BLACK (2 Pack)",
+              "asin": "B0FH7B9M3G",
+              "sourceRow": 68,
+              "amazon": 1783,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 480,
+              "otw2": 2010,
+              "last30": 670
+            },
+            {
+              "id": "US-r69",
+              "name": "Folding BLACK (4 Pack)",
+              "asin": "B0FXVFC9L1",
+              "sourceRow": 69,
+              "amazon": 277,
+              "externalWarehouse": 161,
+              "receiving": 0,
+              "otw1": 30,
+              "otw2": 0,
+              "last30": 78
+            },
+            {
+              "id": "US-r70",
+              "name": "Folding BLACK (10 Pack)",
+              "asin": "B0FXVHFSG4",
+              "sourceRow": 70,
+              "amazon": 37,
+              "externalWarehouse": 0,
+              "receiving": 0,
+              "otw1": 156,
+              "otw2": 0,
+              "last30": 22
+            }
+          ]
+        },
+        {
+          "id": "US-p73",
+          "name": "Floor Stopper",
+          "sourceRow": 73,
+          "children": [
+            {
+              "id": "US-r74",
+              "name": "Stopper - Satin Gold - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 74,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "US-r75",
+              "name": "Floor Stopper - Matt Black - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 75,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "US-r76",
+              "name": "Floor Stopper - Satin - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 76,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "US-r77",
+              "name": "Floor Stopper - Satin Gold - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 77,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "US-r78",
+              "name": "Floor Stopper - Matt Black - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 78,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "US-r79",
+              "name": "Floor Stopper - Satin - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 79,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "US-r80",
+              "name": "Floor Stopper - Polish - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 80,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "UK",
+      "label": "UK",
+      "marketplaceIds": [
+        "A1F83G8C2ARO7P"
+      ],
+      "columnLabels": {
+        "items": "Items",
+        "asin": "ASIN",
+        "amazon": "Amazon",
+        "externalWarehouse": "External Warehouse",
+        "receiving": "Arrived To Amazon",
+        "otw1": "OTW-1",
+        "otw2": "OTW-2",
+        "last30": "Monthly sale",
+        "monthsAmazon": "Month to stock only Amazon inventory",
+        "monthsTotal": "Month to stock"
+      },
+      "groups": [
+        {
+          "id": "UK-p86",
+          "name": "CLEAR/WHITE PARENT",
+          "sourceRow": 86,
+          "children": [
+            {
+              "id": "UK-r87",
+              "name": "Clear 6 pack 2\"",
+              "asin": "B08958WBQN",
+              "sourceRow": 87,
+              "amazon": 760,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 1050,
+              "otw2": 0,
+              "last30": 487
+            },
+            {
+              "id": "UK-r88",
+              "name": "White 7 pack 1.57\"",
+              "asin": "B082WDJVSV",
+              "sourceRow": 88,
+              "amazon": 644,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 58
+            },
+            {
+              "id": "UK-r89",
+              "name": "Clear 4 pack 3.15\"- cindy",
+              "asin": "B0B5XZFX8J",
+              "sourceRow": 89,
+              "amazon": 98,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 44
+            },
+            {
+              "id": "UK-r90",
+              "name": "Clear 12 pack 0.8\"",
+              "asin": "B0C6265GPG",
+              "sourceRow": 90,
+              "amazon": 251,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 400,
+              "otw2": null,
+              "last30": 91
+            },
+            {
+              "id": "UK-r91",
+              "name": "White 5 pack 3.15\"",
+              "asin": "B0D2W4SXCW",
+              "sourceRow": 91,
+              "amazon": 180,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 42
+            },
+            {
+              "id": "UK-r92",
+              "name": "White 3 pack 5\"",
+              "asin": "B0DG32T25H",
+              "sourceRow": 92,
+              "amazon": 93,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 11
+            },
+            {
+              "id": "UK-r93",
+              "name": "Cabinet Bumper Clear 125 pack",
+              "asin": "B0F21XB9DQ",
+              "sourceRow": 93,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 2
+            },
+            {
+              "id": "UK-r94",
+              "name": "Clear 10 pack 2\"",
+              "asin": "B0DSFDSC9Q",
+              "sourceRow": 94,
+              "amazon": 412,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 29
+            },
+            {
+              "id": "UK-r95",
+              "name": "Clear 20 pack 2\"",
+              "asin": "B0F5753RF6",
+              "sourceRow": 95,
+              "amazon": 199,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 3
+            },
+            {
+              "id": "UK-r96",
+              "name": "Clear 30 pack 0.8\"",
+              "asin": "B0HKT413YJ",
+              "sourceRow": 96,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r97",
+              "name": "White 12 pack 0.8\"",
+              "asin": "B0FK5QDXL1",
+              "sourceRow": 97,
+              "amazon": 39,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 9
+            },
+            {
+              "id": "UK-r98",
+              "name": "Cabinet Bumper Clear 200 pack",
+              "asin": "B0FC2HK3Y4",
+              "sourceRow": 98,
+              "amazon": 464,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 18
+            },
+            {
+              "id": "UK-r99",
+              "name": "Clear 14 pack 2\"",
+              "asin": "B0FC2C7VHT",
+              "sourceRow": 99,
+              "amazon": 343,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 48
+            }
+          ]
+        },
+        {
+          "id": "UK-p101",
+          "name": "Strip Bumpers",
+          "sourceRow": 101,
+          "children": [
+            {
+              "id": "UK-r102",
+              "name": "Small Strips Bumper",
+              "asin": "B0HGLVVNYN",
+              "sourceRow": 102,
+              "amazon": 141,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 35
+            },
+            {
+              "id": "UK-r103",
+              "name": "Mix Strips Bumper",
+              "asin": "B0HGMVJ7DT",
+              "sourceRow": 103,
+              "amazon": 776,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 12
+            },
+            {
+              "id": "UK-r104",
+              "name": "Mid Strips Bumper",
+              "asin": "B0HGM5QKRP",
+              "sourceRow": 104,
+              "amazon": 400,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r105",
+              "name": "Large Strips Bumper - 40pcs",
+              "asin": "B0HGLTL417",
+              "sourceRow": 105,
+              "amazon": 150,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r106",
+              "name": "Large Strips Bumper - 20pcs",
+              "asin": "B0HGM4DMKY",
+              "sourceRow": 106,
+              "amazon": 400,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r107",
+              "name": "Square bumpers",
+              "asin": "B0H844S7Q6",
+              "sourceRow": 107,
+              "amazon": 561,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 28
+            }
+          ]
+        },
+        {
+          "id": "UK-p109",
+          "name": "Rings",
+          "sourceRow": 109,
+          "children": [
+            {
+              "id": "UK-r109",
+              "name": "Rings 6+4",
+              "asin": "B0FK3NXPLP",
+              "sourceRow": 109,
+              "amazon": 304,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 500,
+              "otw2": null,
+              "last30": 89
+            },
+            {
+              "id": "UK-r110",
+              "name": "Rings 12+8",
+              "asin": "B0GBZ8SYTD",
+              "sourceRow": 110,
+              "amazon": 100,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r111",
+              "name": "Rings 8 pack",
+              "asin": "B0DLJFFLRC",
+              "sourceRow": 111,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 0
+            }
+          ]
+        },
+        {
+          "id": "UK-p113",
+          "name": "Regular Doorstoppers",
+          "sourceRow": 113,
+          "children": [
+            {
+              "id": "UK-r114",
+              "name": "CHROME (2 Pack)",
+              "asin": "B073TXK7B6",
+              "sourceRow": 114,
+              "amazon": 8320,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 543
+            },
+            {
+              "id": "UK-r115",
+              "name": "Black (2 Pack)",
+              "asin": "B07H95YKYG",
+              "sourceRow": 115,
+              "amazon": 352,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 105
+            },
+            {
+              "id": "UK-r116",
+              "name": "CHROME (4 Pack)",
+              "asin": "B095SKQKMG",
+              "sourceRow": 116,
+              "amazon": 681,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 54
+            },
+            {
+              "id": "UK-r117",
+              "name": "CHROME (6 Pack)",
+              "asin": "B0BH2YJYF8",
+              "sourceRow": 117,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r118",
+              "name": "CHROME (1 Pack)",
+              "asin": "B0H6JB9PJC",
+              "sourceRow": 118,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "UK-r119",
+              "name": "Gold (2 Pack)",
+              "asin": "B0H6JCK6CL",
+              "sourceRow": 119,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 250,
+              "otw2": null,
+              "last30": 0
+            }
+          ]
+        },
+        {
+          "id": "UK-p121",
+          "name": "XL Doorstoppers",
+          "sourceRow": 121,
+          "children": [
+            {
+              "id": "UK-r122",
+              "name": "XL Stopper CHROME (1 Pack)",
+              "asin": "B0DG5VTNRL",
+              "sourceRow": 122,
+              "amazon": 630,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 45
+            },
+            {
+              "id": "UK-r123",
+              "name": "XL Stopper CHROME (2 Pack)",
+              "asin": "B0DG5WFTLG",
+              "sourceRow": 123,
+              "amazon": 224,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 32
+            }
+          ]
+        },
+        {
+          "id": "UK-p125",
+          "name": "Folding Doorstoppers",
+          "sourceRow": 125,
+          "children": [
+            {
+              "id": "UK-r126",
+              "name": "Folding BLACK (4 Pack)",
+              "asin": "B0FXVFC9L1",
+              "sourceRow": 126,
+              "amazon": 157,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 4
+            },
+            {
+              "id": "UK-r127",
+              "name": "Folding CHROME (1 Pack)",
+              "asin": "B0FH7FB1JX",
+              "sourceRow": 127,
+              "amazon": 377,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 34
+            },
+            {
+              "id": "UK-r128",
+              "name": "Folding BLACK (1 Pack)",
+              "asin": "B0FH7BBPHF",
+              "sourceRow": 128,
+              "amazon": 2360,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": 0,
+              "last30": 244
+            },
+            {
+              "id": "UK-r129",
+              "name": "Folding BLACK (2 Pack)",
+              "asin": "B0FH7B9M3G",
+              "sourceRow": 129,
+              "amazon": 573,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 31
+            }
+          ]
+        },
+        {
+          "id": "UK-p131",
+          "name": "Floor Stopper",
+          "sourceRow": 131,
+          "children": [
+            {
+              "id": "UK-r132",
+              "name": "Stopper - Satin Gold - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 132,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "UK-r133",
+              "name": "Floor Stopper - Matt Black - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 133,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "UK-r134",
+              "name": "Floor Stopper - Satin - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 134,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "UK-r135",
+              "name": "Floor Stopper - Satin Gold - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 135,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "UK-r136",
+              "name": "Floor Stopper - Matt Black - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 136,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "UK-r137",
+              "name": "Floor Stopper - Satin - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 137,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "UK-r138",
+              "name": "Floor Stopper - Polish - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 138,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "EU",
+      "label": "DE+FR+IT+ES",
+      "marketplaceIds": [
+        "A1PA6795UKMFR9",
+        "A13V1IB3VIYZZH",
+        "APJ6JRA9NG5V4",
+        "A1RKKUPIHCS9HS"
+      ],
+      "columnLabels": {
+        "items": "Items",
+        "asin": "ASIN",
+        "amazon": "Amazon",
+        "externalWarehouse": "External Warehouse",
+        "receiving": "Arrived To Amazon",
+        "otw1": "OTW-1",
+        "otw2": "OTW-2",
+        "last30": "Monthly sale",
+        "monthsAmazon": "Month to stock only Amazon inventory",
+        "monthsTotal": "Month to stock"
+      },
+      "groups": [
+        {
+          "id": "EU-p142",
+          "name": "CLEAR/WHITE Parent",
+          "sourceRow": 142,
+          "children": [
+            {
+              "id": "EU-r143",
+              "name": "Clear 6 pack 2\"",
+              "asin": "B08958WBQN",
+              "sourceRow": 143,
+              "amazon": 1226,
+              "externalWarehouse": 300,
+              "receiving": null,
+              "otw1": 750,
+              "otw2": null,
+              "last30": 357
+            },
+            {
+              "id": "EU-r144",
+              "name": "White 7 pack 1.57\"",
+              "asin": "B082WDJVSV",
+              "sourceRow": 144,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 500,
+              "otw2": null,
+              "last30": 44
+            },
+            {
+              "id": "EU-r145",
+              "name": "Clear 12 pack 0.8\"",
+              "asin": "B0C6265GPG",
+              "sourceRow": 145,
+              "amazon": 216,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 200,
+              "otw2": null,
+              "last30": 105
+            },
+            {
+              "id": "EU-r146",
+              "name": "White 5 pack 3.15\"",
+              "asin": "B0D2W4SXCW",
+              "sourceRow": 146,
+              "amazon": 87,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 250,
+              "otw2": null,
+              "last30": 153
+            },
+            {
+              "id": "EU-r147",
+              "name": "Clear 4 pack 3.15 - cindy",
+              "asin": "B0B5XZFX8J",
+              "sourceRow": 147,
+              "amazon": 194,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 31
+            },
+            {
+              "id": "EU-r148",
+              "name": "White 3 pack 5\"",
+              "asin": "B0DG32T25H",
+              "sourceRow": 148,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 250,
+              "otw2": 100,
+              "last30": 22
+            },
+            {
+              "id": "EU-r149",
+              "name": "Clear 10 pack 2\"",
+              "asin": "B0DSFDSC9Q",
+              "sourceRow": 149,
+              "amazon": 19,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 1
+            },
+            {
+              "id": "EU-r150",
+              "name": "Clear 20 pack 2\"",
+              "asin": "B0F5753RF6",
+              "sourceRow": 150,
+              "amazon": 214,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 28
+            },
+            {
+              "id": "EU-r151",
+              "name": "Clear 30 pack 0.8\"",
+              "asin": "B0HKT413YJ",
+              "sourceRow": 151,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r152",
+              "name": "White 12 pack 0.8\"",
+              "asin": "B0FK5QDXL1",
+              "sourceRow": 152,
+              "amazon": 186,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 12
+            }
+          ]
+        },
+        {
+          "id": "EU-p154",
+          "name": "Rings",
+          "sourceRow": 154,
+          "children": [
+            {
+              "id": "EU-r154",
+              "name": "Rings 8 pack",
+              "asin": "B0DLJFFLRC",
+              "sourceRow": 154,
+              "amazon": 144,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 48
+            },
+            {
+              "id": "EU-r155",
+              "name": "Rings 6+4",
+              "asin": "B0FK3NXPLP",
+              "sourceRow": 155,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 200,
+              "otw2": 200,
+              "last30": 2
+            },
+            {
+              "id": "EU-r156",
+              "name": "Cabinet Bumper Clear 125 pack",
+              "asin": "B0F21XB9DQ",
+              "sourceRow": 156,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 1
+            }
+          ]
+        },
+        {
+          "id": "EU-p158",
+          "name": "Strip & Square Bumpers",
+          "sourceRow": 158,
+          "children": [
+            {
+              "id": "EU-r158",
+              "name": "Square Bumpers",
+              "asin": "B0H844S7Q6",
+              "sourceRow": 158,
+              "amazon": 325,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 1
+            },
+            {
+              "id": "EU-r159",
+              "name": "Square Bumpers",
+              "asin": "B0HJWD5RG2",
+              "sourceRow": 159,
+              "amazon": 256,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "EU-r160",
+              "name": "Small Strips Bumper",
+              "asin": "B0HGLVVNYN",
+              "sourceRow": 160,
+              "amazon": 133,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 16
+            },
+            {
+              "id": "EU-r161",
+              "name": "Mix Strips Bumper",
+              "asin": "B0HGMVJ7DT",
+              "sourceRow": 161,
+              "amazon": 170,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 400,
+              "otw2": 0,
+              "last30": 10
+            },
+            {
+              "id": "EU-r162",
+              "name": "Mid Strips Bumper",
+              "asin": "B0HGM5QKRP",
+              "sourceRow": 162,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 400,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "EU-r163",
+              "name": "Large Strips Bumper - 40pcs",
+              "asin": "B0HGLTL417",
+              "sourceRow": 163,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 150,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "EU-r164",
+              "name": "Large Strips Bumper - 20pcs",
+              "asin": "B0HGM4DMKY",
+              "sourceRow": 164,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 400,
+              "otw2": null,
+              "last30": 0
+            }
+          ]
+        },
+        {
+          "id": "EU-p166",
+          "name": "Regular Stoppers",
+          "sourceRow": 166,
+          "children": [
+            {
+              "id": "EU-r167",
+              "name": "CHROME (2 Pack)",
+              "asin": "B073TXK7B6",
+              "sourceRow": 167,
+              "amazon": 1236,
+              "externalWarehouse": 415,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 30
+            },
+            {
+              "id": "EU-r168",
+              "name": "BLACK (2 Pack)",
+              "asin": "B07H95YKYG",
+              "sourceRow": 168,
+              "amazon": 25,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 100,
+              "otw2": null,
+              "last30": 10
+            },
+            {
+              "id": "EU-r169",
+              "name": "XL Stoppers Wedge CHROME 1 Pack)",
+              "asin": "B0DG5VTNRL",
+              "sourceRow": 169,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            }
+          ]
+        },
+        {
+          "id": "EU-p171",
+          "name": "Folding Stoppers",
+          "sourceRow": 171,
+          "children": [
+            {
+              "id": "EU-r172",
+              "name": "Folding BLACK (1 Pack)",
+              "asin": "B0FH7BBPHF",
+              "sourceRow": 172,
+              "amazon": 426,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 73
+            },
+            {
+              "id": "EU-r173",
+              "name": "Folding BLACK (2 Pack)",
+              "asin": "B0FH7B9M3G",
+              "sourceRow": 173,
+              "amazon": 412,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 31
+            },
+            {
+              "id": "EU-r174",
+              "name": "Folding CHROME (1 Pack)",
+              "asin": "B0FH7FB1JX",
+              "sourceRow": 174,
+              "amazon": 117,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 35
+            },
+            {
+              "id": "EU-r175",
+              "name": "Folding BLACK (4 Pack)",
+              "asin": "B0FXVFC9L1",
+              "sourceRow": 175,
+              "amazon": 4,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 7
+            }
+          ]
+        },
+        {
+          "id": "EU-p177",
+          "name": "Floor Stopper",
+          "sourceRow": 177,
+          "children": [
+            {
+              "id": "EU-r178",
+              "name": "Stopper - Satin Gold - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 178,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r179",
+              "name": "Floor Stopper - Matt Black - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 179,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r180",
+              "name": "Floor Stopper - Satin - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 180,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r181",
+              "name": "Floor Stopper - Satin Gold - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 181,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r182",
+              "name": "Floor Stopper - Matt Black - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 182,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r183",
+              "name": "Floor Stopper - Satin - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 183,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "EU-r184",
+              "name": "Floor Stopper - Polish - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 184,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "CA",
+      "label": "Canada",
+      "marketplaceIds": [
+        "A2EUQ1WTGCTBG2"
+      ],
+      "columnLabels": {
+        "items": "Items",
+        "asin": "ASIN",
+        "amazon": "Amazon",
+        "externalWarehouse": "External Warehouse",
+        "receiving": "Arrived To Amazon",
+        "otw1": "OTW-1",
+        "otw2": "OTW-2",
+        "last30": "Monthly sale",
+        "monthsAmazon": "Month to stock only Amazon inventory",
+        "monthsTotal": "Month to stock"
+      },
+      "groups": [
+        {
+          "id": "CA-p190",
+          "name": "Clear Parent",
+          "sourceRow": 190,
+          "children": [
+            {
+              "id": "CA-r191",
+              "name": "Clear 6 pack 2\"",
+              "asin": "B08958WBQN",
+              "sourceRow": 191,
+              "amazon": 2105,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 351
+            },
+            {
+              "id": "CA-r192",
+              "name": "White 7 pack 1.57\"",
+              "asin": "B082WDJVSV",
+              "sourceRow": 192,
+              "amazon": 89,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 32
+            },
+            {
+              "id": "CA-r193",
+              "name": "Clear 4 pack 3.15\"",
+              "asin": "B0B5XZFX8J",
+              "sourceRow": 193,
+              "amazon": 267,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 10
+            },
+            {
+              "id": "CA-r194",
+              "name": "Clear 12 pack 0.8\"",
+              "asin": "B0C6265GPG",
+              "sourceRow": 194,
+              "amazon": 91,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 200,
+              "otw2": null,
+              "last30": 37
+            },
+            {
+              "id": "CA-r195",
+              "name": "Cabinet Bumper Clear 125 pack",
+              "asin": "B0F21XB9DQ",
+              "sourceRow": 195,
+              "amazon": 48,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 6
+            },
+            {
+              "id": "CA-r196",
+              "name": "Clear 10 pack 2\"",
+              "asin": "B0DSFDSC9Q",
+              "sourceRow": 196,
+              "amazon": 271,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 18
+            },
+            {
+              "id": "CA-r197",
+              "name": "Clear 14 pack 2\"",
+              "asin": "B0FC2C7VHT",
+              "sourceRow": 197,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "CA-r198",
+              "name": "Clear 20 pack 2\"",
+              "asin": "B0F5753RF6",
+              "sourceRow": 198,
+              "amazon": 107,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 25
+            }
+          ]
+        },
+        {
+          "id": "CA-p200",
+          "name": "White Parent",
+          "sourceRow": 200,
+          "children": [
+            {
+              "id": "CA-r201",
+              "name": "White 3 pack 5\"",
+              "asin": "B0DG32T25H",
+              "sourceRow": 201,
+              "amazon": 476,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 108
+            },
+            {
+              "id": "CA-r202",
+              "name": "White 2 pack 7\"",
+              "asin": "B0F2N1W834",
+              "sourceRow": 202,
+              "amazon": 13,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 250,
+              "otw2": null,
+              "last30": 45
+            },
+            {
+              "id": "CA-r203",
+              "name": "White 5 pack 3.15\"",
+              "asin": "B0D2W4SXCW",
+              "sourceRow": 203,
+              "amazon": 193,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 150,
+              "otw2": 600,
+              "last30": 155
+            },
+            {
+              "id": "CA-r204",
+              "name": "White 12 pack 0.8\"",
+              "asin": "B0FK5QDXL1",
+              "sourceRow": 204,
+              "amazon": 16,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": 13
+            }
+          ]
+        },
+        {
+          "id": "CA-p206",
+          "name": "Strip & Square Bumpers",
+          "sourceRow": 206,
+          "children": [
+            {
+              "id": "CA-r206",
+              "name": "Clear 30 pack 0.8\"",
+              "asin": null,
+              "sourceRow": 206,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r207",
+              "name": "Square Bumpers",
+              "asin": "B0H844S7Q6",
+              "sourceRow": 207,
+              "amazon": 495,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 49
+            },
+            {
+              "id": "CA-r208",
+              "name": "Clear 5 pack 3.15\"",
+              "asin": "B0H8PM6X2H",
+              "sourceRow": 208,
+              "amazon": 101,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 48
+            },
+            {
+              "id": "CA-r209",
+              "name": "Small Strips Bumper",
+              "asin": "B0HGLVVNYN",
+              "sourceRow": 209,
+              "amazon": 153,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 13
+            },
+            {
+              "id": "CA-r210",
+              "name": "Mix Strips Bumper",
+              "asin": "B0HGMVJ7DT",
+              "sourceRow": 210,
+              "amazon": 377,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 12
+            },
+            {
+              "id": "CA-r211",
+              "name": "Mid Strips Bumper",
+              "asin": "B0HGM5QKRP",
+              "sourceRow": 211,
+              "amazon": 391,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 10
+            },
+            {
+              "id": "CA-r212",
+              "name": "Large Strips Bumper - 40pcs",
+              "asin": "B0HGLTL417",
+              "sourceRow": 212,
+              "amazon": 90,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 10
+            },
+            {
+              "id": "CA-r213",
+              "name": "Large Strips Bumper - 20pcs",
+              "asin": "B0HGM4DMKY",
+              "sourceRow": 213,
+              "amazon": 288,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 10
+            }
+          ]
+        },
+        {
+          "id": "CA-p215",
+          "name": "Rings",
+          "sourceRow": 215,
+          "children": [
+            {
+              "id": "CA-r215",
+              "name": "Rings 6+4",
+              "asin": "B0FK3NXPLP",
+              "sourceRow": 215,
+              "amazon": 638,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 38
+            },
+            {
+              "id": "CA-r216",
+              "name": "Rings 12+8",
+              "asin": "B0GBZ8SYTD",
+              "sourceRow": 216,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "CA-r217",
+              "name": "Rings 8 pack",
+              "asin": "B0DLJFFLRC",
+              "sourceRow": 217,
+              "amazon": 74,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 6
+            },
+            {
+              "id": "CA-r218",
+              "name": "Rings 12 pack",
+              "asin": "B0DKFJ7L6R",
+              "sourceRow": 218,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            }
+          ]
+        },
+        {
+          "id": "CA-p220",
+          "name": "Regular Doorstoppers",
+          "sourceRow": 220,
+          "children": [
+            {
+              "id": "CA-r221",
+              "name": "CHROME (2 Pack)",
+              "asin": "B073TXK7B6",
+              "sourceRow": 221,
+              "amazon": 432,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 1008,
+              "otw2": null,
+              "last30": 246
+            },
+            {
+              "id": "CA-r222",
+              "name": "BLACK (2 Pack)",
+              "asin": "B07H95YKYG",
+              "sourceRow": 222,
+              "amazon": 56,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 300,
+              "otw2": null,
+              "last30": 68
+            },
+            {
+              "id": "CA-r223",
+              "name": "CHROME (4 Pack)",
+              "asin": "B095SKQKMG",
+              "sourceRow": 223,
+              "amazon": 206,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 12
+            },
+            {
+              "id": "CA-r224",
+              "name": "CHROME (10 Pack)",
+              "asin": "B0CP4B8WN6",
+              "sourceRow": 224,
+              "amazon": 25,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 1
+            }
+          ]
+        },
+        {
+          "id": "CA-p226",
+          "name": "XL Doorstoppers",
+          "sourceRow": 226,
+          "children": [
+            {
+              "id": "CA-r227",
+              "name": "XL Stopper CHROME 1 Pack)",
+              "asin": "B0DG5VTNRL",
+              "sourceRow": 227,
+              "amazon": 543,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 200,
+              "otw2": null,
+              "last30": 2
+            },
+            {
+              "id": "CA-r228",
+              "name": "XL Stopper CHROME (2 Pack)",
+              "asin": "B0DG5WFTLG",
+              "sourceRow": 228,
+              "amazon": 53,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 26
+            }
+          ]
+        },
+        {
+          "id": "CA-p230",
+          "name": "Folding Doorstoppers",
+          "sourceRow": 230,
+          "children": [
+            {
+              "id": "CA-r231",
+              "name": "Stoppers Folding BLACK (1 Pack)",
+              "asin": "B0FH7BBPHF",
+              "sourceRow": 231,
+              "amazon": 270,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 540,
+              "otw2": null,
+              "last30": 128
+            },
+            {
+              "id": "CA-r232",
+              "name": "Stoppers Folding BLACK (2 Pack)",
+              "asin": "B0FH7B9M3G",
+              "sourceRow": 232,
+              "amazon": 42,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 120,
+              "otw2": null,
+              "last30": 22
+            },
+            {
+              "id": "CA-r233",
+              "name": "Stoppers Wedge Gold (2 Pack)",
+              "asin": "B0H6JCK6CL",
+              "sourceRow": 233,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 50,
+              "otw2": null,
+              "last30": 1
+            }
+          ]
+        },
+        {
+          "id": "CA-p235",
+          "name": "Silicone Door Knob Cover",
+          "sourceRow": 235,
+          "children": [
+            {
+              "id": "CA-r236",
+              "name": "Clear Silicone Door Knob Cover 2 Pack",
+              "asin": "B0GLHKS74N",
+              "sourceRow": 236,
+              "amazon": 730,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 43
+            },
+            {
+              "id": "CA-r237",
+              "name": "Black Silicone Door Knob Cover 2 Pack",
+              "asin": "B0GLH971ZM",
+              "sourceRow": 237,
+              "amazon": 161,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 13
+            },
+            {
+              "id": "CA-r238",
+              "name": "White Silicone Door Knob Cover 2 Pack",
+              "asin": "B0GLHMNY1W",
+              "sourceRow": 238,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 2
+            },
+            {
+              "id": "CA-r239",
+              "name": "Clear Silicone Door Knob Cover 4 Pack",
+              "asin": "B0H1J1H59L",
+              "sourceRow": 239,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "CA-r240",
+              "name": "Black Silicone Door Knob Cover 4 Pack",
+              "asin": "B0H1CHVK2Q",
+              "sourceRow": 240,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            },
+            {
+              "id": "CA-r241",
+              "name": "White Silicone Door Knob Cover 4 Pack",
+              "asin": "B0H1CC7BCB",
+              "sourceRow": 241,
+              "amazon": 0,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": 0,
+              "otw2": null,
+              "last30": 0
+            }
+          ]
+        },
+        {
+          "id": "CA-p243",
+          "name": "Floor Stopper",
+          "sourceRow": 243,
+          "children": [
+            {
+              "id": "CA-r244",
+              "name": "Stopper - Satin Gold - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 244,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r245",
+              "name": "Floor Stopper - Matt Black - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 245,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r246",
+              "name": "Floor Stopper - Satin - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 246,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r247",
+              "name": "Floor Stopper - Satin Gold - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 247,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r248",
+              "name": "Floor Stopper - Matt Black - Dia25*H50mm",
+              "asin": null,
+              "sourceRow": 248,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r249",
+              "name": "Floor Stopper - Satin - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 249,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            },
+            {
+              "id": "CA-r250",
+              "name": "Floor Stopper - Polish - Dia25*H40mm",
+              "asin": null,
+              "sourceRow": 250,
+              "amazon": null,
+              "externalWarehouse": null,
+              "receiving": null,
+              "otw1": null,
+              "otw2": null,
+              "last30": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

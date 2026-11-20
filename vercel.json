@@ -1,0 +1,9 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    { "path": "/api/sync?country=US", "schedule": "0 4 * * *" },
+    { "path": "/api/sync?country=CA", "schedule": "10 4 * * *" },
+    { "path": "/api/sync?country=UK", "schedule": "20 4 * * *" },
+    { "path": "/api/sync?country=EU", "schedule": "30 4 * * *" }
+  ]
+}
