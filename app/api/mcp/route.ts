@@ -6,7 +6,7 @@
  */
 import { NextResponse } from "next/server";
 import { hasBasicAuth, hasIngestToken } from "@/lib/auth";
-import { marketplaceTotals, monthsAmazon, monthsTotal, packSizeOf, productKey, supplierNewOrder, supplierTotal } from "@/lib/formulas";
+import { monthsAmazon, monthsTotal, packSizeOf, productKey, supplierNewOrder, supplierPools } from "@/lib/formulas";
 import { applyUpdates, loadDoc, saveDoc, storageConfigured, validateUpdate } from "@/lib/store";
 import { NUMERIC_FIELDS, SUPPLIER_NUMBER_FIELDS, SUPPLIER_TEXT_FIELDS, type CellUpdate, type InventoryDoc } from "@/lib/types";
 
@@ -106,7 +106,7 @@ function flatten(doc: InventoryDoc, country?: string) {
 }
 
 function supplierView(doc: InventoryDoc) {
-  const t = marketplaceTotals(doc.countries);
+  const { totals: t, ofItem } = supplierPools(doc);
   return (doc.supplier?.groups ?? []).map((g) => ({
     parent: g.name,
     children: g.children.map((it) => {
@@ -119,7 +119,8 @@ function supplierView(doc: InventoryDoc) {
         readyWaitingForPacking: it.ready,
         underProduction: it.underProduction,
         sendingInventoryAllMarketplaces: sending,
-        totalInventorySupplier: supplierTotal(it, sending),
+        totalInventorySupplier: ofItem.get(it.id)?.total ?? 0,
+        sharesUnitsWith: (ofItem.get(it.id)?.members ?? []).filter((m) => m.id !== it.id).map((m) => m.name),
         futureOrderAllMarketplacesPacks: t.futureOrder.get(productKey(it)) ?? 0,
         newOrderFromSupplierAllMarketplaces: supplierNewOrder(it, t.futureOrder.get(productKey(it)) ?? 0),
         supplierName: it.supplierName,

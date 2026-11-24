@@ -2,7 +2,6 @@
 
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  marketplaceTotals,
   monthsAmazon,
   monthsTotal,
   pipeline,
@@ -11,7 +10,8 @@ import {
   sumChildren,
   packSizeOf,
   supplierNewOrder,
-  supplierTotal,
+  poolTotalOf,
+  supplierPools,
 } from "@/lib/formulas";
 import {
   autoSource,
@@ -91,6 +91,7 @@ export default function Dashboard() {
   const [lowOnly, setLowOnly] = useState<null | "low" | "mid">(null);
   const [syncing, setSyncing] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const [blocked, setBlocked] = useState<null | { title: string; lines: string[] }>(null);
   const [error, setError] = useState<string | null>(null);
 
   const flash = useCallback((msg: string) => {
@@ -147,6 +148,44 @@ export default function Dashboard() {
   );
 
   const country = tab === "SUPPLIER" ? null : (doc?.countries.find((c) => c.id === tab) ?? null);
+
+  /**
+   * Sending Inventory can't exceed what the supplier still has. Returns a message when it would,
+   * using the same maths as the Supplier Inventory tab (units per pack, all marketplaces).
+   */
+  const checkSending = useCallback(
+    (countryLabel: string, child: Child, next: number | null): null | { title: string; lines: string[] } => {
+      if (!doc || next === null || next <= (child.sending ?? 0)) return null; // lowering is always fine
+      const key = productKey(child);
+      const item = doc.supplier?.groups.flatMap((g) => g.children).find((i) => productKey(i) === key);
+      if (!item) return null; // no supplier row for this product
+      const { ofItem } = supplierPools(doc);
+      const pool = ofItem.get(item.id);
+      if (!pool) return null;
+      const pack = packSizeOf(item);
+      const stockUnits = pool.units;
+      const otherSendingUnits = pool.sendingUnits - (child.sending ?? 0) * pack;
+      const availableUnits = stockUnits - otherSendingUnits;
+      const shared = pool.members.length > 1 ? pool.members.map((m) => m.name).join(", ") : null;
+      const neededUnits = next * pack;
+      if (neededUnits <= availableUnits) return null;
+      const availablePacks = Math.max(0, Math.floor(availableUnits / pack));
+      return {
+        title: "Not enough supplier inventory",
+        lines: [
+          `You entered ${fmtInt(next)} for ${child.name} (${countryLabel}), but the supplier only has ${fmtInt(availablePacks)} available.`,
+          pack > 1
+            ? `That's ${fmtInt(Math.max(0, availableUnits))} single units ÷ ${pack} per pack; ${fmtInt(next)} packs would need ${fmtInt(neededUnits)} units.`
+            : "",
+          `Total Inventory Supplier: ${fmtInt(stockUnits)} ready + under production` +
+            (otherSendingUnits > 0 ? ` − ${fmtInt(otherSendingUnits)} already being sent from other rows/marketplaces.` : ".") +
+            (shared ? ` Units are shared by ${shared}.` : ""),
+          "The value was not saved.",
+        ].filter(Boolean),
+      };
+    },
+    [doc],
+  );
 
   const runSync = useCallback(async () => {
     if (!country) return;
@@ -271,6 +310,8 @@ export default function Dashboard() {
           setOpen={setOpen}
           toggle={toggle}
           onSave={save}
+          checkSending={checkSending}
+          onBlocked={setBlocked}
         />
       ) : (
         <SupplierView doc={doc} query={query} open={open} toggle={toggle} onSave={save} />
@@ -305,6 +346,21 @@ export default function Dashboard() {
       </div>
 
       {toast && <div className="toast">{toast}</div>}
+      {blocked && (
+        <div className="modal-backdrop" onClick={() => setBlocked(null)}>
+          <div className="modal" role="alertdialog" aria-modal="true" onClick={(e) => e.stopPropagation()}>
+            <h2>⚠️ {blocked.title}</h2>
+            {blocked.lines.map((l, i) => (
+              <p key={i}>{l}</p>
+            ))}
+            <div className="modal-actions">
+              <button className="btn primary" onClick={() => setBlocked(null)}>
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -320,6 +376,8 @@ function CountryView({
   setOpen,
   toggle,
   onSave,
+  checkSending,
+  onBlocked,
 }: {
   country: Country;
   query: string;
@@ -329,6 +387,8 @@ function CountryView({
   setOpen: (s: Set<string>) => void;
   toggle: (id: string) => void;
   onSave: SaveFn;
+  checkSending: (countryLabel: string, child: Child, next: number | null) => null | { title: string; lines: string[] };
+  onBlocked: (msg: { title: string; lines: string[] }) => void;
 }) {
   const labels = country.columnLabels;
   const q = query.trim().toLowerCase();
@@ -365,7 +425,17 @@ function CountryView({
     };
   }, [country]);
 
-  const save = (rowId: string, field: string, value: CellValue) => onSave(country.id, rowId, field, value);
+  const save = (rowId: string, field: string, value: CellValue) => {
+    if (field === "sending") {
+      const child = country.groups.flatMap((g) => g.children).find((c) => c.id === rowId);
+      const problem = child ? checkSending(country.label, child, value as number | null) : null;
+      if (problem) {
+        onBlocked(problem);
+        return;
+      }
+    }
+    onSave(country.id, rowId, field, value);
+  };
 
   return (
     <>
@@ -563,7 +633,7 @@ function SupplierView({
   toggle: (id: string) => void;
   onSave: SaveFn;
 }) {
-  const totals = useMemo(() => marketplaceTotals(doc.countries), [doc.countries]);
+  const { ofItem, pools, totals } = useMemo(() => supplierPools(doc), [doc]);
   const q = query.trim().toLowerCase();
   const sendingOf = (it: SupplierItem) => totals.sending.get(productKey(it)) ?? 0;
   const futureOf = (it: SupplierItem) => totals.futureOrder.get(productKey(it)) ?? 0;
@@ -593,7 +663,7 @@ function SupplierView({
   const stats = {
     ready: sum(all, (i) => i.ready ?? 0),
     production: sum(all, (i) => i.underProduction ?? 0),
-    total: sum(all, (i) => supplierTotal(i, sendingOf(i))),
+    total: pools.reduce((s, p) => s + p.total, 0),
     newOrder: sum(all, newOrderOf),
     suppliers: new Set(all.map((i) => (i.supplierName ?? "").trim().toLowerCase()).filter(Boolean)).size,
   };
@@ -632,8 +702,9 @@ function SupplierView({
       <div className="syncline">
         Doorstoppers are produced as single units: Sending Inventory and Future order (entered in Amazon packs on the
         marketplace tabs) are multiplied by <b>Units per pack</b> — e.g. 1,000 × CHROME (2 Pack) = 2,000 units. Total
-        Inventory Supplier = Ready + Under production − Sending × units per pack. New Order = SUM(Future order, all MP) ×
-        units per pack.
+        Inventory Supplier = Ready + Under production − Sending × units per pack; pack sizes of the same doorstopper
+        (e.g. CHROME 1/2/4/6/10 Pack) share one pool of units, marked &quot;shared units&quot;. New Order = SUM(Future order,
+        all MP) × units per pack. Sending Inventory above what the supplier has is refused with a warning.
       </div>
 
       <div className="sheet-wrap">
@@ -688,7 +759,7 @@ function SupplierView({
               const isOpen = open.has(g.id) || Boolean(q);
               const ready = sum(g.all, (i) => i.ready ?? 0);
               const prod = sum(g.all, (i) => i.underProduction ?? 0);
-              const total = sum(g.all, (i) => supplierTotal(i, sendingOf(i)));
+              const total = poolTotalOf(g.all, ofItem);
               const newOrder = sum(g.all, newOrderOf);
               const names = [...new Set(g.all.map((i) => i.supplierName?.trim()).filter(Boolean))];
               return (
@@ -710,7 +781,9 @@ function SupplierView({
                   {isOpen &&
                     g.children.map((it) => {
                       const sending = sendingOf(it);
-                      const total = supplierTotal(it, sending);
+                      const pool = ofItem.get(it.id);
+                      const total = pool?.total ?? 0;
+                      const shared = pool && pool.members.length > 1 ? pool.members : null;
                       const newOrder = newOrderOf(it);
                       return (
                         <tr className="child" key={it.id}>
@@ -753,9 +826,15 @@ function SupplierView({
                           </td>
                           <td
                             className={`m total ${total < 0 ? "low" : ""}`}
-                            title={`${fmtInt(it.ready ?? 0)} ready + ${fmtInt(it.underProduction ?? 0)} in production − ${fmtInt(sending)} sending × ${packSizeOf(it)} units per pack`}
+                            title={
+                              shared
+                                ? `Shared single units for ${shared.map((m) => m.name).join(", ")}: ` +
+                                  `${fmtInt(pool!.units)} ready + in production − ${fmtInt(pool!.sendingUnits)} units being sent (all packs, all MP)`
+                                : `${fmtInt(it.ready ?? 0)} ready + ${fmtInt(it.underProduction ?? 0)} in production − ${fmtInt(sending)} sending × ${packSizeOf(it)} units per pack`
+                            }
                           >
                             {fmtInt(total)}
+                            {shared && <span className="shared">shared units</span>}
                           </td>
                           <td
                             className="m total"

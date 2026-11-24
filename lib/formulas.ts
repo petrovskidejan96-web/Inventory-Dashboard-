@@ -89,3 +89,55 @@ export function supplierNewOrder(item: SupplierItem, futureOrderAllMp: number): 
 export function supplierTotal(item: SupplierItem, sendingAllMp: number): number {
   return n(item.ready) + n(item.underProduction) - sendingAllMp * packSizeOf(item);
 }
+
+/**
+ * Doorstopper ASINs that differ only by pack size (CHROME 1/2/4/6/10 Pack…) are made from the same
+ * single units, so their supplier stock is one shared pool. Everything else is its own pool.
+ */
+export function poolKeyOf(groupName: string, item: SupplierItem): string {
+  if (!/door\s*stopper|doorstopper|floor\s*stopper|wedge/i.test(`${groupName} ${item.name}`)) return `item:${item.id}`;
+  const base = item.name
+    .replace(/\(?\s*\d+\s*-?\s*pack\s*\)?/i, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "");
+  return `pool:${groupName.toLowerCase()}|${base}`;
+}
+
+export interface SupplierPool {
+  key: string;
+  members: SupplierItem[];
+  /** Ready + Under production, single units, whole pool. */
+  units: number;
+  /** Sending Inventory (all MP) × units per pack, whole pool. */
+  sendingUnits: number;
+  /** Total Inventory Supplier for the pool. */
+  total: number;
+}
+
+export function supplierPools(doc: { countries: Country[]; supplier?: { groups: { name: string; children: SupplierItem[] }[] } }) {
+  const t = marketplaceTotals(doc.countries);
+  const byKey = new Map<string, SupplierPool>();
+  const ofItem = new Map<string, SupplierPool>();
+  for (const g of doc.supplier?.groups ?? [])
+    for (const it of g.children) {
+      const key = poolKeyOf(g.name, it);
+      let pool = byKey.get(key);
+      if (!pool) byKey.set(key, (pool = { key, members: [], units: 0, sendingUnits: 0, total: 0 }));
+      pool.members.push(it);
+      pool.units += n(it.ready) + n(it.underProduction);
+      pool.sendingUnits += (t.sending.get(productKey(it)) ?? 0) * packSizeOf(it);
+      ofItem.set(it.id, pool);
+    }
+  for (const p of byKey.values()) p.total = p.units - p.sendingUnits;
+  return { pools: [...byKey.values()], ofItem, totals: t };
+}
+
+/** Sum of Total Inventory Supplier over the distinct pools the items belong to. */
+export function poolTotalOf(items: SupplierItem[], ofItem: Map<string, SupplierPool>): number {
+  const seen = new Set<SupplierPool>();
+  for (const it of items) {
+    const p = ofItem.get(it.id);
+    if (p) seen.add(p);
+  }
+  return [...seen].reduce((s, p) => s + p.total, 0);
+}
