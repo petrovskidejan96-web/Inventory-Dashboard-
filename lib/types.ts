@@ -13,7 +13,8 @@ export const NUMERIC_FIELDS = [
 export type NumericField = (typeof NUMERIC_FIELDS)[number];
 
 /** Columns on the Supplier Inventory tab that are typed in. */
-export const SUPPLIER_NUMBER_FIELDS = ["ready", "underProduction"] as const;
+/** packSize = single units the supplier makes per Amazon ASIN (2 for a 2 Pack doorstopper). */
+export const SUPPLIER_NUMBER_FIELDS = ["ready", "underProduction", "packSize"] as const;
 export const SUPPLIER_TEXT_FIELDS = ["supplierName", "supplierLink"] as const;
 export type SupplierNumberField = (typeof SUPPLIER_NUMBER_FIELDS)[number];
 export type SupplierTextField = (typeof SUPPLIER_TEXT_FIELDS)[number];
@@ -93,6 +94,9 @@ export interface SupplierItem {
   asin: string | null;
   ready: number | null;
   underProduction: number | null;
+  /** Units per pack: Sending Inventory and Future order (Amazon packs) are multiplied by this
+   *  to get the single units the supplier produces. 1 for products made as packs. */
+  packSize?: number | null;
   supplierName: string | null;
   supplierLink: string | null;
   meta?: Partial<Record<SupplierField, CellMeta>>;

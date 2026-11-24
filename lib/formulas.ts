@@ -65,7 +65,27 @@ export function marketplaceTotals(countries: Country[]) {
   return { sending, futureOrder };
 }
 
-/** Total Inventory Supplier = Ready/Waiting for packing + Under production − Sending Inventory (all marketplaces). */
+/**
+ * Doorstoppers (regular / wedge, XL, folding, floor) are produced as single units, so an Amazon
+ * "2 Pack" ASIN needs 2 units per pack. Everything else is produced as the pack itself (1).
+ */
+export function defaultPackSize(groupName: string, itemName: string): number {
+  if (!/door\s*stopper|doorstopper|floor\s*stopper|wedge/i.test(`${groupName} ${itemName}`)) return 1;
+  const m = itemName.match(/(\d+)\s*-?\s*pack/i);
+  return m ? Math.max(1, Number(m[1])) : 1;
+}
+
+export function packSizeOf(item: SupplierItem): number {
+  const p = item.packSize;
+  return typeof p === "number" && Number.isFinite(p) && p > 0 ? p : 1;
+}
+
+/** New Order from Supplier All MP = SUM(Future order, all MP) × units per pack. */
+export function supplierNewOrder(item: SupplierItem, futureOrderAllMp: number): number {
+  return futureOrderAllMp * packSizeOf(item);
+}
+
+/** Total Inventory Supplier = Ready + Under production − Sending Inventory (all MP) × units per pack. */
 export function supplierTotal(item: SupplierItem, sendingAllMp: number): number {
-  return n(item.ready) + n(item.underProduction) - sendingAllMp;
+  return n(item.ready) + n(item.underProduction) - sendingAllMp * packSizeOf(item);
 }

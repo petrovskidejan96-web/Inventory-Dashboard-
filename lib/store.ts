@@ -1,4 +1,5 @@
 import { Redis } from "@upstash/redis";
+import { defaultPackSize } from "./formulas";
 import seed from "@/data/inventory.seed.json";
 import type { CellSource, CellUpdate, InventoryDoc } from "./types";
 import { NUMERIC_FIELDS, SUPPLIER_NUMBER_FIELDS, SUPPLIER_TEXT_FIELDS } from "./types";
@@ -17,7 +18,10 @@ export function storageConfigured(): boolean {
 }
 
 function seedDoc(): InventoryDoc {
-  return structuredClone(seed) as unknown as InventoryDoc;
+  const doc = structuredClone(seed) as unknown as InventoryDoc;
+  for (const g of doc.supplier.groups)
+    for (const it of g.children) if (it.packSize === undefined) it.packSize = defaultPackSize(g.name, it.name);
+  return doc;
 }
 
 export async function loadDoc(): Promise<InventoryDoc> {
@@ -44,6 +48,8 @@ function migrate(doc: InventoryDoc): InventoryDoc {
         if (ch.futureOrder === undefined) ch.futureOrder = s?.futureOrder ?? null;
       }
   if (!doc.supplier) doc.supplier = fresh.supplier;
+  for (const g of doc.supplier.groups)
+    for (const it of g.children) if (it.packSize === undefined) it.packSize = defaultPackSize(g.name, it.name);
   return doc;
 }
 

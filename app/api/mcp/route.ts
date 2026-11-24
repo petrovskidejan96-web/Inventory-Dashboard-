@@ -6,7 +6,7 @@
  */
 import { NextResponse } from "next/server";
 import { hasBasicAuth, hasIngestToken } from "@/lib/auth";
-import { marketplaceTotals, monthsAmazon, monthsTotal, productKey, supplierTotal } from "@/lib/formulas";
+import { marketplaceTotals, monthsAmazon, monthsTotal, packSizeOf, productKey, supplierNewOrder, supplierTotal } from "@/lib/formulas";
 import { applyUpdates, loadDoc, saveDoc, storageConfigured, validateUpdate } from "@/lib/store";
 import { NUMERIC_FIELDS, SUPPLIER_NUMBER_FIELDS, SUPPLIER_TEXT_FIELDS, type CellUpdate, type InventoryDoc } from "@/lib/types";
 
@@ -30,8 +30,8 @@ const TOOLS = [
     name: "get_supplier_inventory",
     description:
       "Read the Supplier Inventory tab: per product Ready/Waiting for packing, Under production, Total Inventory Supplier " +
-      "(Ready + Under production − Sending Inventory across all marketplaces), New Order from Supplier All MP " +
-      "(sum of Future order across marketplaces), Supplier Name and Supplier Link.",
+      "(Ready + Under production − Sending Inventory across all marketplaces × units per pack), New Order from Supplier All MP " +
+      "(sum of Future order across marketplaces × units per pack; doorstoppers are produced as single units), Supplier Name and Supplier Link.",
     inputSchema: { type: "object", properties: {} },
   },
   {
@@ -115,11 +115,13 @@ function supplierView(doc: InventoryDoc) {
         id: it.id,
         name: it.name,
         asin: it.asin,
+        unitsPerPack: packSizeOf(it),
         readyWaitingForPacking: it.ready,
         underProduction: it.underProduction,
         sendingInventoryAllMarketplaces: sending,
         totalInventorySupplier: supplierTotal(it, sending),
-        newOrderFromSupplierAllMarketplaces: t.futureOrder.get(productKey(it)) ?? 0,
+        futureOrderAllMarketplacesPacks: t.futureOrder.get(productKey(it)) ?? 0,
+        newOrderFromSupplierAllMarketplaces: supplierNewOrder(it, t.futureOrder.get(productKey(it)) ?? 0),
         supplierName: it.supplierName,
         supplierLink: it.supplierLink,
       };

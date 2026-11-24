@@ -9,6 +9,8 @@ import {
   productKey,
   stockLevel,
   sumChildren,
+  packSizeOf,
+  supplierNewOrder,
   supplierTotal,
 } from "@/lib/formulas";
 import {
@@ -564,7 +566,8 @@ function SupplierView({
   const totals = useMemo(() => marketplaceTotals(doc.countries), [doc.countries]);
   const q = query.trim().toLowerCase();
   const sendingOf = (it: SupplierItem) => totals.sending.get(productKey(it)) ?? 0;
-  const newOrderOf = (it: SupplierItem) => totals.futureOrder.get(productKey(it)) ?? 0;
+  const futureOf = (it: SupplierItem) => totals.futureOrder.get(productKey(it)) ?? 0;
+  const newOrderOf = (it: SupplierItem) => supplierNewOrder(it, futureOf(it));
 
   const groups = useMemo(
     () =>
@@ -617,7 +620,7 @@ function SupplierView({
         <div className="card">
           <div className="label">New Order from Supplier All MP</div>
           <div className="value">{fmtInt(stats.newOrder)}</div>
-          <div className="hint">Future order, all marketplaces</div>
+          <div className="hint">units: Future order × units per pack</div>
         </div>
         <div className="card">
           <div className="label">Suppliers</div>
@@ -627,15 +630,18 @@ function SupplierView({
       </div>
 
       <div className="syncline">
-        Total Inventory Supplier = Ready + Under production − Sending Inventory (USA + UK + DE+FR+IT+ES + Canada). New
-        Order = Future order summed over the same marketplaces.
+        Doorstoppers are produced as single units: Sending Inventory and Future order (entered in Amazon packs on the
+        marketplace tabs) are multiplied by <b>Units per pack</b> — e.g. 1,000 × CHROME (2 Pack) = 2,000 units. Total
+        Inventory Supplier = Ready + Under production − Sending × units per pack. New Order = SUM(Future order, all MP) ×
+        units per pack.
       </div>
 
       <div className="sheet-wrap">
         <table className="sheet">
           <colgroup>
-            <col style={{ width: "24%" }} />
-            <col style={{ width: "9%" }} />
+            <col style={{ width: "21%" }} />
+            <col style={{ width: "8.5%" }} />
+            <col style={{ width: "6%" }} />
             <col style={{ width: "9%" }} />
             <col style={{ width: "9%" }} />
             <col style={{ width: "10%" }} />
@@ -648,16 +654,19 @@ function SupplierView({
               <th className="items">Items</th>
               <th>ASIN</th>
               <th className="manual">
+                Units per pack<span className="src">single units in 1 ASIN</span>
+              </th>
+              <th className="manual">
                 Ready/Waiting for packing supplier<span className="src">entered manually</span>
               </th>
               <th className="manual">
                 Under production supplier<span className="src">entered manually</span>
               </th>
               <th className="formula">
-                Total Inventory Supplier<span className="src">Ready + Under production − Sending Inventory (all MP)</span>
+                Total Inventory Supplier<span className="src">Ready + Under production − Sending (all MP) × units per pack</span>
               </th>
               <th className="formula">
-                New Order from Supplier All MP<span className="src">SUM of Future order, all MP</span>
+                New Order from Supplier All MP<span className="src">SUM of Future order, all MP × units per pack</span>
               </th>
               <th className="manual">
                 Supplier Name<span className="src">entered manually</span>
@@ -670,7 +679,7 @@ function SupplierView({
           <tbody>
             {groups.length === 0 && (
               <tr>
-                <td colSpan={8} className="empty">
+                <td colSpan={9} className="empty">
                   No products match.
                 </td>
               </tr>
@@ -690,6 +699,7 @@ function SupplierView({
                       <span className="count">{g.all.length} items</span>
                     </td>
                     <td />
+                    <td />
                     <td className="num">{fmtInt(ready)}</td>
                     <td className="num">{fmtInt(prod)}</td>
                     <td className={`m total ${total < 0 ? "low" : ""}`}>{fmtInt(total)}</td>
@@ -707,6 +717,17 @@ function SupplierView({
                           <td className="items">{it.name}</td>
                           <td className="asin">
                             <AsinLink asin={it.asin} domain={DOMAINS.US} />
+                          </td>
+                          <td className="num manual-col">
+                            <NumberCell
+                              rowId={it.id}
+                              field="packSize"
+                              label={it.name}
+                              value={packSizeOf(it)}
+                              meta={it.meta?.packSize}
+                              auto={null}
+                              onSave={save}
+                            />
                           </td>
                           <td className="num manual-col">
                             <NumberCell
@@ -732,11 +753,16 @@ function SupplierView({
                           </td>
                           <td
                             className={`m total ${total < 0 ? "low" : ""}`}
-                            title={`${fmtInt(it.ready ?? 0)} ready + ${fmtInt(it.underProduction ?? 0)} in production − ${fmtInt(sending)} sending`}
+                            title={`${fmtInt(it.ready ?? 0)} ready + ${fmtInt(it.underProduction ?? 0)} in production − ${fmtInt(sending)} sending × ${packSizeOf(it)} units per pack`}
                           >
                             {fmtInt(total)}
                           </td>
-                          <td className="m total">{fmtInt(newOrder)}</td>
+                          <td
+                            className="m total"
+                            title={`${fmtInt(futureOf(it))} Future order (all MP) × ${packSizeOf(it)} units per pack`}
+                          >
+                            {fmtInt(newOrder)}
+                          </td>
                           <td className="manual-col">
                             <TextCell
                               rowId={it.id}
