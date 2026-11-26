@@ -253,18 +253,12 @@ export default function Dashboard() {
           <button className="btn" onClick={() => setOpen(allOpen ? new Set() : new Set(visibleGroupIds))}>
             {allOpen ? "Collapse all" : "Expand all"}
           </button>
-          {country && (
+          {country && persistent && amazonReady[country.id] && (
             <button
-              className="btn primary"
+              className="btn"
               onClick={runSync}
-              disabled={syncing || !persistent || !amazonReady[country.id]}
-              title={
-                !persistent
-                  ? "Connect storage first"
-                  : !amazonReady[country.id]
-                    ? `Add SP-API credentials for ${country.label}`
-                    : "Pull Amazon, AWD, Business Report and Proboxx numbers now"
-              }
+              disabled={syncing}
+              title="Optional: pull numbers now with the app's own SP-API keys"
             >
               {syncing ? "Syncing…" : `Sync ${country.label}`}
             </button>
@@ -276,12 +270,6 @@ export default function Dashboard() {
         <div className="notice">
           Showing the numbers imported from the spreadsheet. Shared storage isn&apos;t connected yet, so any edits you make are
           saved in this browser only. Connect Upstash Redis in Vercel to share edits and enable automatic syncing.
-        </div>
-      )}
-      {persistent && country && !amazonReady[country.id] && (
-        <div className="notice info">
-          Amazon {country.label} isn&apos;t connected yet — add the SP-API credentials in Vercel to fill Amazon, External
-          Warehouse and Last 30 days sales automatically.
         </div>
       )}
 
@@ -332,15 +320,15 @@ export default function Dashboard() {
         </span>
         <span>
           <span className="d" style={{ background: "var(--auto)" }} />
-          filled by Amazon
+          filled by Amazon (MCP)
         </span>
         <span>
           <span className="d" style={{ background: "var(--proboxx)" }} />
-          filled by Proboxx
+          filled by Proboxx (MCP)
         </span>
         <span>
           <span className="d" style={{ background: "#f29900" }} />
-          edited by hand or API
+          edited by hand
         </span>
         <span>Click any number to edit it.</span>
       </div>
@@ -485,7 +473,8 @@ function CountryView({
       </div>
 
       <div className="syncline">
-        Amazon sync: {timeAgo(country.sync?.lastSyncedAt)}
+        Updated by Claude via MCP (Amazon Selling Partner + Proboxx) every day at 8:58 AM ET · last update:{" "}
+        <b>{timeAgo(country.sync?.lastSyncedAt)}</b>
         {country.sync?.message ? ` — ${country.sync.message}` : ""}
       </div>
 
@@ -512,7 +501,7 @@ function CountryView({
                 return (
                   <th key={f}>
                     {labels[f as keyof typeof labels]}
-                    {src && <span className="src">{src.replace("SP-API · ", "")}</span>}
+                    {src && <span className="src">{src}</span>}
                   </th>
                 );
               })}

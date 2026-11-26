@@ -154,9 +154,35 @@ async function callTool(name: string, args: Record<string, unknown>) {
     if (!Array.isArray(updates) || !updates.every(validateUpdate)) {
       throw new Error("updates must be [{ country, asin|id, field, value }]");
     }
-    const result = applyUpdates(doc, updates as CellUpdate[], "api");
+    // Tag each value with where it came from, so the dashboard shows the right dot,
+    // and stamp "last update" on every tab that received data.
+    const list = updates as CellUpdate[];
+    const sourceOf = (u: CellUpdate) =>
+      u.country === "SUPPLIER"
+        ? "api"
+        : u.field === "amazon" || u.field === "last30" || u.field === "externalWarehouse"
+          ? "amazon"
+          : u.field === "otw1" || u.field === "otw2"
+            ? "proboxx"
+            : "api";
+    let applied = 0;
+    const notFound: CellUpdate[] = [];
+    for (const src of ["amazon", "proboxx", "api"] as const) {
+      const part = list.filter((u) => sourceOf(u) === src);
+      if (!part.length) continue;
+      const r = applyUpdates(doc, part, src);
+      applied += r.applied;
+      notFound.push(...r.notFound);
+    }
+    const now = new Date().toISOString();
+    for (const c of doc.countries) {
+      const mine = list.filter((u) => u.country === c.id);
+      if (!mine.length) continue;
+      const fields = [...new Set(mine.map((u) => u.field))].join(", ");
+      c.sync = { lastSyncedAt: now, status: "ok", message: `Claude updated ${mine.length} values (${fields}).` };
+    }
     await saveDoc(doc);
-    return result;
+    return { applied, notFound };
   }
   throw new Error(`Unknown tool: ${name}`);
 }

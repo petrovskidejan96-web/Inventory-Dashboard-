@@ -22,10 +22,10 @@ export type SupplierField = SupplierNumberField | SupplierTextField;
 
 /** Where each column is filled from automatically. Anything can still be overwritten by hand. */
 export function autoSource(country: string, field: NumericField): string | null {
-  if (field === "amazon") return "SP-API · FBA available + FC processing";
-  if (field === "last30") return "SP-API · Business Reports";
-  if (field === "externalWarehouse" && country === "US") return "SP-API · AWD available";
-  if (field === "otw1" || field === "otw2") return "Proboxx API";
+  if (field === "amazon") return "Amazon MCP · FBA available + FC processing";
+  if (field === "last30") return "Amazon MCP · units ordered";
+  if (field === "externalWarehouse" && country === "US") return "Amazon MCP · AWD available";
+  if (field === "otw1" || field === "otw2") return "Proboxx MCP";
   return null;
 }
 
